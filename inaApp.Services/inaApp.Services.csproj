@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\inaApp.Common\inaApp.Common.csproj" />
+    <ProjectReference Include="..\inaApp.Entities\inaApp.Entities.csproj" />
+    <ProjectReference Include="..\inaApp.Repository\inaApp.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

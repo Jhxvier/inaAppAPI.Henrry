@@ -1,0 +1,6 @@
+@inaApi_HostAddress = http://localhost:5095
+
+GET {{inaApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

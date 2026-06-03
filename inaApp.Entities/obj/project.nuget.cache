@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "TVnO7aciajI=",
+  "success": true,
+  "projectFilePath": "C:\\INA\\C#VS\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512"
+  ],
+  "logs": []
+}

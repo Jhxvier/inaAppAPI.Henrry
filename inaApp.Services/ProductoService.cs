@@ -12,12 +12,13 @@ namespace inaApp.Services
 
     {
 
-        private readonly IProductoRepository _productRepo;
+        private readonly IProductoRepository _repository;
 
-        public ProductoService(IProductoRepository productRepo)
+        public ProductoService(IProductoRepository repository)
         {
-            _productRepo = productRepo;
+            _repository = repository;
         }
+
 
         public Task<Producto> ActualizarAsync(Producto Producto)
         {
@@ -41,7 +42,7 @@ namespace inaApp.Services
 
         public Task<List<Producto>> ObtenerTodosAsync()
         {
-            _productRepo.ObtenerTodosAsync();
+            _repository.ObtenerTodosAsync();
             return null;
         }
     }

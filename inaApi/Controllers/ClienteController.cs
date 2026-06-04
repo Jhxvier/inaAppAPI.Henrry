@@ -1,44 +1,48 @@
 ﻿using inaApp.Common.Interfaces;
+using inaApp.Entities;
+using inaApp.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inaApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/Producto")]
-    public class ProductoController : Controller
+    [Route("api/Cliente")]
+    public class ClienteController : Controller
     {
+        private readonly IClienteRepository _clienteRepository;
 
-        private readonly IProductoRepository _productoRepository;
-
-        public ProductoController(IProductoRepository productoRepo)
+        public ClienteController(IClienteRepository clienteRepo)
         {
-            _productoRepository = productoRepo;
+            _clienteRepository = clienteRepo;
         }
 
 
 
-        // GET: ProductoController
-        [HttpGet]
+        // GET: ClienteController
+
+        [HttpGet] //Indica que este método responde a solicitudes HTTP GET
         public ActionResult Index()
         {
-            _productoRepository.ObtenerTodosAsync();
-            return Ok("Prueba correcta");
+
+            //datos para probar la conexion sin una base de datos
+            return Ok(_clienteRepository.ObtenerTodosAsync());
+
         }
 
-        // GET: ProductoController/Details/5
+        // GET: ClienteController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: ProductoController/Create
+        // GET: ClienteController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ProductoController/Create
+        // POST: ClienteController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -53,13 +57,13 @@ namespace inaApp.Api.Controllers
             }
         }
 
-        // GET: ProductoController/Edit/5
+        // GET: ClienteController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: ProductoController/Edit/5
+        // POST: ClienteController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -74,13 +78,13 @@ namespace inaApp.Api.Controllers
             }
         }
 
-        // GET: ProductoController/Delete/5
+        // GET: ClienteController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: ProductoController/Delete/5
+        // POST: ClienteController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

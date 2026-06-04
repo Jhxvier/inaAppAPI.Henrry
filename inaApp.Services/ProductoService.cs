@@ -8,24 +8,21 @@ using inaApp.Entities;
 
 namespace inaApp.Services
 {
-    public class ProductoService : IProductoService
-
+    public class ProductoService : IGenericServices<Producto>
     {
+        private readonly IGenericRepository<Producto> _productoRepo;
 
-        private readonly IProductoRepository _repository;
-
-        public ProductoService(IProductoRepository repository)
+        public ProductoService(IGenericRepository<Producto> productoRepo)
         {
-            _repository = repository;
+            _productoRepo = productoRepo;
         }
 
-
-        public Task<Producto> ActualizarAsync(Producto Producto)
+        public Task<Producto> ActualizarAsync(Producto entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Producto> CrearAsync(Producto Producto)
+        public Task<Producto> CrearAsync(Producto entity)
         {
             throw new NotImplementedException();
         }
@@ -42,8 +39,7 @@ namespace inaApp.Services
 
         public Task<List<Producto>> ObtenerTodosAsync()
         {
-            _repository.ObtenerTodosAsync();
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,33 +1,27 @@
 ﻿using inaApp.Common.Interfaces;
 using inaApp.Entities;
-using inaApp.Repository;
+using inaApp.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inaApp.Api.Controllers
 {
-    [ApiController]
-    [Route("api/Cliente")]
     public class ClienteController : Controller
     {
-        private readonly IClienteRepository _clienteRepository;
 
-        public ClienteController(IClienteRepository clienteRepo)
+        private readonly IGenericServices<Cliente> _clienteService;
+
+        public ClienteController(IGenericServices<Cliente> clienteService)
         {
-            _clienteRepository = clienteRepo;
+            _clienteService = clienteService;
         }
 
-
-
         // GET: ClienteController
-
-        [HttpGet] //Indica que este método responde a solicitudes HTTP GET
+        [HttpGet]
         public ActionResult Index()
         {
-
-            //datos para probar la conexion sin una base de datos
-            return Ok(_clienteRepository.ObtenerTodosAsync());
-
+            _clienteService.ObtenerTodosAsync();
+            return Ok("Prueba correcta");
         }
 
         // GET: ClienteController/Details/5

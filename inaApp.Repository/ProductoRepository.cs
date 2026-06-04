@@ -8,14 +8,15 @@ using inaApp.Entities;
 
 namespace inaApp.Repository
 {
-    public class ProductoRepository : IProductoRepository
+    public class ProductoRepository : IGenericRepository<Producto>
     {
-        public Task<Producto> ActualizarAsync(Producto Producto)
+
+        public Task<Producto> ActualizarAsync(Producto entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Producto> CrearAsync(Producto Producto)
+        public Task<Producto> CrearAsync(Producto entity)
         {
             throw new NotImplementedException();
         }

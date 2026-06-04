@@ -1,4 +1,5 @@
 ﻿using inaApp.Common.Interfaces;
+using inaApp.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,20 +10,19 @@ namespace inaApp.Api.Controllers
     public class ProductoController : Controller
     {
 
-        private readonly IProductoRepository _productoRepository;
+        private readonly IGenericServices<Producto> _productoService;
 
-        public ProductoController(IProductoRepository productoRepo)
+        public ProductoController(IGenericServices<Producto> productoService)
         {
-            _productoRepository = productoRepo;
+            _productoService = productoService;
         }
-
 
 
         // GET: ProductoController
         [HttpGet]
         public ActionResult Index()
         {
-            _productoRepository.ObtenerTodosAsync();
+            _productoService.ObtenerTodosAsync();
             return Ok("Prueba correcta");
         }
 

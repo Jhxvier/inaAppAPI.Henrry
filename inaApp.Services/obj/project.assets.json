@@ -2849,8 +2849,8 @@
     },
     "inaApp.Data/1.0.0": {
       "type": "project",
-      "path": "../Data/inaApp.Data.csproj",
-      "msbuildProject": "../Data/inaApp.Data.csproj"
+      "path": "../inaApp.Data/inaApp.Data.csproj",
+      "msbuildProject": "../inaApp.Data/inaApp.Data.csproj"
     },
     "inaApp.Entities/1.0.0": {
       "type": "project",
@@ -2877,11 +2877,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\INA\\C#VS\\inaApp\\inaApp.Services\\inaApp.Services.csproj",
+      "projectUniqueName": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Services\\inaApp.Services.csproj",
       "projectName": "inaApp.Services",
-      "projectPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Services\\inaApp.Services.csproj",
+      "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Services\\inaApp.Services.csproj",
       "packagesPath": "C:\\Users\\jleiba\\.nuget\\packages\\",
-      "outputPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Services\\obj\\",
+      "outputPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Services\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2903,14 +2903,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\INA\\C#VS\\inaApp\\inaApp.Common\\inaApp.Common.csproj": {
-              "projectPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Common\\inaApp.Common.csproj"
+            "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj": {
+              "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj"
             },
-            "C:\\INA\\C#VS\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj": {
-              "projectPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj"
+            "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj": {
+              "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj"
             },
-            "C:\\INA\\C#VS\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj": {
-              "projectPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj"
+            "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj": {
+              "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj"
             }
           }
         }

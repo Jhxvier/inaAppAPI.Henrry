@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\inaApp.Data.csproj" />
     <ProjectReference Include="..\inaApp.Common\inaApp.Common.csproj" />
+    <ProjectReference Include="..\inaApp.Data\inaApp.Data.csproj" />
     <ProjectReference Include="..\inaApp.Entities\inaApp.Entities.csproj" />
   </ItemGroup>
 

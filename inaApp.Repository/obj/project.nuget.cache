@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Mr4633A9/eU=",
+  "dgSpecHash": "WK6UfnZ0l2Q=",
   "success": true,
-  "projectFilePath": "C:\\INA\\C#VS\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj",
+  "projectFilePath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Repository\\inaApp.Repository.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jleiba\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

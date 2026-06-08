@@ -16,5 +16,6 @@ namespace inaApp.Data
         }
 
         public DbSet<Producto> Producto { get; set; }
+
     }
 }

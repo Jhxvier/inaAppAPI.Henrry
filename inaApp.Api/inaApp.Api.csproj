@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\inaApp.Data.csproj" />
     <ProjectReference Include="..\inaApp.Common\inaApp.Common.csproj" />
+    <ProjectReference Include="..\inaApp.Data\inaApp.Data.csproj" />
     <ProjectReference Include="..\inaApp.Entities\inaApp.Entities.csproj" />
     <ProjectReference Include="..\inaApp.Services\inaApp.Services.csproj" />
   </ItemGroup>

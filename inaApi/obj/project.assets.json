@@ -1732,6 +1732,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "inaApp.Common": "1.0.0",
+          "inaApp.Data": "1.0.0",
           "inaApp.Entities": "1.0.0"
         },
         "compile": {

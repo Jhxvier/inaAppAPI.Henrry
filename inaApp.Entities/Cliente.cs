@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace inaApp.Entities
 {
+    [Table("tbCliente")]
     public class Cliente
     {
         [Key]

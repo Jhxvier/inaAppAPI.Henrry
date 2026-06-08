@@ -413,6 +413,9 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "C:\\INA\\C#VS\\inaApp\\Data\\inaApp.Data.csproj": {
+                "projectPath": "C:\\INA\\C#VS\\inaApp\\Data\\inaApp.Data.csproj"
+              },
               "C:\\INA\\C#VS\\inaApp\\inaApp.Common\\inaApp.Common.csproj": {
                 "projectPath": "C:\\INA\\C#VS\\inaApp\\inaApp.Common\\inaApp.Common.csproj"
               },

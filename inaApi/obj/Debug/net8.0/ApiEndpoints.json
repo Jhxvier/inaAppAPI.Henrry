@@ -11,42 +11,32 @@
   },
   {
     "ContainingType": "inaApp.Api.Controllers.ProductoController",
+    "Method": "Create",
+    "RelativePath": "api/Producto",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "producto",
+        "Type": "inaApp.Entities.Producto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "inaApp.Api.Controllers.ProductoController",
     "Method": "Details",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "",
+    "RelativePath": "api/Producto/{id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "inaApp.Api.Controllers.ProductoController",
-    "Method": "Create",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "inaApp.Api.Controllers.ProductoController",
-    "Method": "Create",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "collection",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -54,73 +44,36 @@
   {
     "ContainingType": "inaApp.Api.Controllers.ProductoController",
     "Method": "Edit",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "",
+    "RelativePath": "api/Producto/{id}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "inaApp.Api.Controllers.ProductoController",
-    "Method": "Edit",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       },
       {
-        "Name": "collection",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
-        "IsRequired": false
+        "Name": "producto",
+        "Type": "inaApp.Entities.Producto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "inaApp.Api.Controllers.ProductoController",
-    "Method": "Delete",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "",
+    "Method": "DeleteAsync",
+    "RelativePath": "api/Producto/{id}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "inaApp.Api.Controllers.ProductoController",
-    "Method": "Delete",
-    "RelativePath": "api/Producto",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "collection",
-        "Type": "Microsoft.AspNetCore.Http.IFormCollection",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

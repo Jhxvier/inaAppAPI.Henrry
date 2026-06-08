@@ -5,35 +5,110 @@ using System.Text;
 using System.Threading.Tasks;
 using inaApp.Common.Interfaces;
 using inaApp.Entities;
+using inaApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace inaApp.Repository
 {
     public class ProductoRepository : IGenericRepository<Producto>
     {
 
-        public Task<Producto> ActualizarAsync(Producto entity)
+        //inyección de dependencia para acceder al contexto de la base de datos
+        private readonly ApplicationDbContext _dbContext;
+
+        //constructor para inicializar el contexto de la base de datos
+        public ProductoRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+
+            _dbContext = context;
         }
 
-        public Task<Producto> CrearAsync(Producto entity)
+
+
+        public async Task<Producto> ActualizarAsync(Producto entity)
         {
-            throw new NotImplementedException();
+            try 
+            {
+                _dbContext.Producto.Update(entity); // actualizar el producto en el contexto de la base de datos
+                await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
+                return entity; // retornar el producto actualizado
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<bool> EliminarAsync(int id)
+        public async Task<Producto> CrearAsync(Producto entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                 _dbContext.Producto.Add(entity); // agregar el nuevo producto al contexto de la base de datos
+                await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
+                return entity; // retornar el producto creado
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<Producto> ObtenerPorIdAsync(int id)
+        public async Task<bool> EliminarAsync(int id)
         {
-            throw new NotImplementedException();
+            try 
+            {
+                //obtener el producto por id utilizando el método ObtenerPorIdAsync
+                var producto = await ObtenerPorIdAsync(id); 
+
+                if (producto == null) // si el producto no existe, retornar false
+                {
+                    return false;
+                }
+
+                //borrado logico
+                producto.estado = false; // cambiar el estado del producto a false para indicar que está eliminado
+                _dbContext.Producto.Update(producto); // actualizar el producto en el contexto de la base de datos
+                await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
+
+                return true; // retornar true para indicar que el producto fue eliminado exitosamente
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<List<Producto>> ObtenerTodosAsync()
+        public async Task<Producto> ObtenerPorIdAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _dbContext.Producto.Where(x=> x.Id == id && x.estado == true).SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)
+
+                if (entity is null) // si el producto no existe o está eliminado, retornar null
+                {
+                    throw new Exception("Producto no encontrado"); // lanzar una excepción indicando que el producto no fue encontrado
+                }
+
+                return entity; // retornar el producto encontrado
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Producto>> ObtenerTodosAsync()
+        {
+
+            try
+            {
+                return await _dbContext.Producto.Where(x => x.estado == true).ToListAsync(); // expresion lambda para filtrar los productos activos (estado == true)
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
+

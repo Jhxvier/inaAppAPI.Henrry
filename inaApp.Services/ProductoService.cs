@@ -17,29 +17,31 @@ namespace inaApp.Services
             _productoRepo = productoRepo;
         }
 
-        public Task<Producto> ActualizarAsync(Producto entity)
+        public async Task<Producto> ActualizarAsync(Producto entity)
         {
-            throw new NotImplementedException();
+            return await _productoRepo.ActualizarAsync(entity);
         }
 
-        public Task<Producto> CrearAsync(Producto entity)
+        public async Task<Producto> CrearAsync(Producto entity)
         {
-            throw new NotImplementedException();
+            //reglas de negocio
+
+            return await _productoRepo.CrearAsync(entity);
         }
 
-        public Task<bool> EliminarAsync(int id)
+        public async Task<bool> EliminarAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _productoRepo.EliminarAsync(id);
         }
 
-        public Task<Producto> ObtenerPorIdAsync(int id)
+        public async Task<Producto> ObtenerPorIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _productoRepo.ObtenerPorIdAsync(id);
         }
 
-        public Task<List<Producto>> ObtenerTodosAsync()
+        public async Task<List<Producto>> ObtenerTodosAsync()
         {
-            throw new NotImplementedException();
+            return await _productoRepo.ObtenerTodosAsync();
         }
     }
 }

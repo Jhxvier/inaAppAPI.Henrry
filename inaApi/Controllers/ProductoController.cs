@@ -2,6 +2,7 @@
 using inaApp.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace inaApp.Api.Controllers
 {
@@ -20,78 +21,113 @@ namespace inaApp.Api.Controllers
 
         // GET: ProductoController
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            _productoService.ObtenerTodosAsync();
-            return Ok("Prueba correcta");
+
+            try
+            {
+                var lista = await _productoService.ObtenerTodosAsync();
+
+                if (lista ==null || lista.Count == 0)
+                {
+                    return NotFound("No hay datos");
+                }
+
+                return Ok(lista);
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, Contacte con el administrador");
+            }
         }
 
         // GET: ProductoController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
-        }
-
-        // GET: ProductoController/Create
-        public ActionResult Create()
-        {
-            return View();
+            //obtener el producto por id utilizando el método ObtenerPorIdAsync
+            try
+            {
+                var producto = await _productoService.ObtenerPorIdAsync(id);
+                if (producto == null)
+                {
+                    return NotFound("Producto no encontrado");
+                }
+                return Ok(producto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, Contacte con el administrador");
+            }
         }
 
         // POST: ProductoController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create([FromBody] Producto producto)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var nuevoProducto = await _productoService.CrearAsync(producto);
+                return Created("Producto Creado", nuevoProducto);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest(ex.Message);
             }
+
+
         }
 
         // GET: ProductoController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Edit(int id, [FromBody] Producto producto)
         {
-            return View();
-        }
-
-        // POST: ProductoController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
+            //editar un producto
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (producto == null)
+                {
+                    return BadRequest("El producto no puede ser nulo");
+                }
+
+                if (id != producto.Id)
+                {
+                    return BadRequest("El id de la URL no coincide con el id del producto");
+                }
+
+                var productoActualizado = await _productoService.ActualizarAsync(producto);
+
+                return Ok(productoActualizado);
             }
             catch
             {
-                return View();
+                return StatusCode(500, "Error, contacte con el administrador");
             }
         }
 
-        // GET: ProductoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: ProductoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(int id)
         {
+
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                if (id <= 0)
+                {
+                    return BadRequest("Id no puede ser nulo");
+                }
+
+                var result = await _productoService.EliminarAsync(id);
+
+                return result ? Ok("Producto eliminado") : BadRequest("Producto no encontrado");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return StatusCode(500, "Error, Contacte con el administrador");
             }
         }
     }

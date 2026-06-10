@@ -48,6 +48,11 @@ namespace inaApp.Api.Controllers
         {
             try
             {
+                if (id <= 0)
+                {
+                    return BadRequest("El id del cliente debe ser mayor a 0");
+                }
+
                 var cliente = await _clienteService.ObtenerPorIdAsync(id);
 
                 return Ok(cliente);
@@ -68,9 +73,22 @@ namespace inaApp.Api.Controllers
         {
             try
             {
+                if (cliente == null)
+                {
+                    return BadRequest("Debe enviar la información del cliente");
+                }
+
                 cliente.Estado = true;
                 var nuevoCliente = await _clienteService.CrearAsync(cliente);
                 return Created("Cliente Creado", nuevoCliente);
+            }
+            catch (InvalidClientNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidClientIdentificationException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (DuplicateIdentificationException ex)
             {
@@ -88,6 +106,16 @@ namespace inaApp.Api.Controllers
         {
             try
             {
+                if (id <= 0)
+                {
+                    return BadRequest("El id del cliente debe ser mayor a 0");
+                }
+
+                if (cliente == null)
+                {
+                    return BadRequest("Debe enviar la información del cliente");
+                }
+
                 cliente.IdCliente = id;
                 cliente.Estado = true;
 
@@ -95,9 +123,21 @@ namespace inaApp.Api.Controllers
 
                 return Ok(clienteActualizado);
             }
+            catch (InvalidClientNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidClientIdentificationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (DuplicateIdentificationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -113,7 +153,7 @@ namespace inaApp.Api.Controllers
             {
                 if (id <= 0)
                 {
-                    return BadRequest("Id no puede ser nulo");
+                    return BadRequest("El id del cliente debe ser mayor a 0");
                 }
 
                 var result = await _clienteService.EliminarAsync(id);

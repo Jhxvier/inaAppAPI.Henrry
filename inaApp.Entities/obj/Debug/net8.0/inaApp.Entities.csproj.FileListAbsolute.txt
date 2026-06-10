@@ -10,14 +10,18 @@ C:\INA\C#VS\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.dll
 C:\INA\C#VS\inaApp\inaApp.Entities\obj\Debug\net8.0\refint\inaApp.Entities.dll
 C:\INA\C#VS\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.pdb
 C:\INA\C#VS\inaApp\inaApp.Entities\obj\Debug\net8.0\ref\inaApp.Entities.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.deps.json
-C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.csproj.AssemblyReference.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.GeneratedMSBuildEditorConfig.editorconfig
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.AssemblyInfoInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.AssemblyInfo.cs
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.csproj.CoreCompileInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.sourcelink.json
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.deps.json
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Entities.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Common.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\bin\Debug\net8.0\inaApp.Common.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.E.5A4826DA.Up2Date
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\refint\inaApp.Entities.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Entities\obj\Debug\net8.0\inaApp.Entities.pdb

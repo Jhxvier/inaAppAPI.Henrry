@@ -1,9 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "VvQPMysMscE=",
+  "dgSpecHash": "XJWLlXryWgI=",
   "success": true,
   "projectFilePath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.16\\microsoft.entityframeworkcore.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.16\\microsoft.entityframeworkcore.abstractions.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.16\\microsoft.entityframeworkcore.analyzers.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\9.0.16\\microsoft.extensions.caching.abstractions.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.16\\microsoft.extensions.caching.memory.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\9.0.16\\microsoft.extensions.dependencyinjection.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.16\\microsoft.extensions.dependencyinjection.abstractions.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.logging\\9.0.16\\microsoft.extensions.logging.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\9.0.16\\microsoft.extensions.logging.abstractions.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.options\\9.0.16\\microsoft.extensions.options.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.16\\microsoft.extensions.primitives.9.0.16.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\system.diagnostics.diagnosticsource\\9.0.16\\system.diagnostics.diagnosticsource.9.0.16.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.27\\microsoft.windowsdesktop.app.ref.8.0.27.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.27\\microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.27\\microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512"

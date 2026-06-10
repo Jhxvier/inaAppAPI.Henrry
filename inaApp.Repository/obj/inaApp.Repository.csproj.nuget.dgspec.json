@@ -32,11 +32,7 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {
-              "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj": {
-                "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -210,7 +206,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj": {
+                "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -228,6 +228,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.16, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

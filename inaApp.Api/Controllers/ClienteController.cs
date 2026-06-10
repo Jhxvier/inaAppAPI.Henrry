@@ -68,24 +68,11 @@ namespace inaApp.Api.Controllers
         {
             try
             {
-                if (cliente == null)
-                {
-                    return BadRequest("El cliente es requerido");
-                }
-
                 cliente.Estado = true;
                 var nuevoCliente = await _clienteService.CrearAsync(cliente);
                 return Created("Cliente Creado", nuevoCliente);
             }
-            catch (InvalidClientNameException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidClientBirthDateException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (DuplicateNameException ex)
+            catch (DuplicateIdentificationException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -101,27 +88,14 @@ namespace inaApp.Api.Controllers
         {
             try
             {
-                if (cliente == null)
-                {
-                    return BadRequest("El cliente es requerido");
-                }
-
-                cliente.Id = id;
+                cliente.IdCliente = id;
                 cliente.Estado = true;
 
                 var clienteActualizado = await _clienteService.ActualizarAsync(cliente);
 
                 return Ok(clienteActualizado);
             }
-            catch (InvalidClientNameException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidClientBirthDateException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (DuplicateNameException ex)
+            catch (DuplicateIdentificationException ex)
             {
                 return BadRequest(ex.Message);
             }

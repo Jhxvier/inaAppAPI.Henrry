@@ -22,11 +22,11 @@ namespace inaApp.Services
         {
             //reglas de negocio
 
-            //nombre no repetido
+            //identificación no repetida
             var clientes = await _clienteRepo.ObtenerTodosAsync();
-            if (clientes.Any(c => EsMismoCliente(c, entity) && c.Id != entity.Id))
+            if (clientes.Any(c => EsMismaIdentificacion(c, entity) && c.IdCliente != entity.IdCliente))
             {
-                throw new DuplicateNameException($"El cliente {entity.Nombre} {entity.Apellido1} {entity.Apellido2} ya existe");
+                throw new DuplicateIdentificationException($"El cliente con la identificación {entity.NumeroIdentificacion} ya existe");
             }
 
             return await _clienteRepo.ActualizarAsync(entity);
@@ -36,11 +36,11 @@ namespace inaApp.Services
         {
             //reglas de negocio
 
-            //nombre no repetido
+            //identificación no repetida
             var clientes = await _clienteRepo.ObtenerTodosAsync();
-            if (clientes.Any(c => EsMismoCliente(c, entity)))
+            if (clientes.Any(c => EsMismaIdentificacion(c, entity)))
             {
-                throw new DuplicateNameException($"El cliente {entity.Nombre} {entity.Apellido1} {entity.Apellido2} ya existe");
+                throw new DuplicateIdentificationException($"El cliente con la identificación {entity.NumeroIdentificacion} ya existe");
             }
 
             return await _clienteRepo.CrearAsync(entity);
@@ -81,11 +81,10 @@ namespace inaApp.Services
             return clientes;
         }
 
-        private static bool EsMismoCliente(Cliente cliente, Cliente entity)
+        private static bool EsMismaIdentificacion(Cliente cliente, Cliente entity)
         {
-            return cliente.Nombre.ToLower() == entity.Nombre.ToLower()
-                && cliente.Apellido1.ToLower() == entity.Apellido1.ToLower()
-                && (cliente.Apellido2 ?? string.Empty).ToLower() == (entity.Apellido2 ?? string.Empty).ToLower();
+            return cliente.TipoIdentificacion == entity.TipoIdentificacion
+                && cliente.NumeroIdentificacion.ToLower() == entity.NumeroIdentificacion.ToLower();
         }
     }
 }

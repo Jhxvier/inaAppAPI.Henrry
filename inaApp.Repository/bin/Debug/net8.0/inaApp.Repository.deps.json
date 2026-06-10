@@ -572,9 +572,6 @@
         }
       },
       "inaApp.Common/1.0.0": {
-        "dependencies": {
-          "inaApp.Entities": "1.0.0"
-        },
         "runtime": {
           "inaApp.Common.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -596,6 +593,10 @@
         }
       },
       "inaApp.Entities/1.0.0": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.16",
+          "inaApp.Common": "1.0.0"
+        },
         "runtime": {
           "inaApp.Entities.dll": {
             "assemblyVersion": "1.0.0.0",

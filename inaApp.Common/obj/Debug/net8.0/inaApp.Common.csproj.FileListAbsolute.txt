@@ -14,18 +14,14 @@ C:\INA\C#VS\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Entities.dll
 C:\INA\C#VS\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Entities.pdb
 C:\INA\C#VS\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.csproj.AssemblyReference.cache
 C:\INA\C#VS\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.C.D09D49E9.Up2Date
-C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.deps.json
-C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Entities.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Entities.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.csproj.AssemblyReference.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.GeneratedMSBuildEditorConfig.editorconfig
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.AssemblyInfoInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.AssemblyInfo.cs
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.csproj.CoreCompileInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.sourcelink.json
-C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.C.D09D49E9.Up2Date
+C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.deps.json
+C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Common\bin\Debug\net8.0\inaApp.Common.pdb
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\refint\inaApp.Common.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Common\obj\Debug\net8.0\inaApp.Common.pdb

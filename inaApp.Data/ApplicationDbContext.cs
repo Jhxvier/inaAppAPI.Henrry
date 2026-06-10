@@ -16,6 +16,7 @@ namespace inaApp.Data
         }
 
         public DbSet<Producto> Producto { get; set; }
+        public DbSet<Cliente> Cliente { get; set; }
 
     }
 }

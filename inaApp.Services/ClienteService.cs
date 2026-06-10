@@ -1,4 +1,5 @@
-﻿using inaApp.Common.Interfaces;
+﻿using inaApp.Common.Exceptions;
+using inaApp.Common.Interfaces;
 using inaApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,29 +18,74 @@ namespace inaApp.Services
             _clienteRepo = clienteRepo;
         }
 
-        public Task<Cliente> ActualizarAsync(Cliente entity)
+        public async Task<Cliente> ActualizarAsync(Cliente entity)
         {
-            throw new NotImplementedException();
+            //reglas de negocio
+
+            //nombre no repetido
+            var clientes = await _clienteRepo.ObtenerTodosAsync();
+            if (clientes.Any(c => EsMismoCliente(c, entity) && c.Id != entity.Id))
+            {
+                throw new DuplicateNameException($"El cliente {entity.Nombre} {entity.Apellido1} {entity.Apellido2} ya existe");
+            }
+
+            return await _clienteRepo.ActualizarAsync(entity);
         }
 
-        public Task<Cliente> CrearAsync(Cliente entity)
+        public async Task<Cliente> CrearAsync(Cliente entity)
         {
-            throw new NotImplementedException();
+            //reglas de negocio
+
+            //nombre no repetido
+            var clientes = await _clienteRepo.ObtenerTodosAsync();
+            if (clientes.Any(c => EsMismoCliente(c, entity)))
+            {
+                throw new DuplicateNameException($"El cliente {entity.Nombre} {entity.Apellido1} {entity.Apellido2} ya existe");
+            }
+
+            return await _clienteRepo.CrearAsync(entity);
         }
 
-        public Task<bool> EliminarAsync(int id)
+        public async Task<bool> EliminarAsync(int id)
         {
-            throw new NotImplementedException();
+            var cliente = await _clienteRepo.ObtenerPorIdAsync(id);
+
+            if (cliente == null)
+            {
+                throw new NotFoundException($"El Cliente con el id {id} no existe");
+            }
+
+            return await _clienteRepo.EliminarAsync(id);
         }
 
-        public Task<Cliente> ObtenerPorIdAsync(int id)
+        public async Task<Cliente> ObtenerPorIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var cliente = await _clienteRepo.ObtenerPorIdAsync(id);
+
+            if (cliente == null)
+            {
+                throw new NotFoundException($"El Cliente con el id {id} no existe");
+            }
+
+            return cliente;
         }
 
-        public Task<List<Cliente>> ObtenerTodosAsync()
+        public async Task<List<Cliente>> ObtenerTodosAsync()
         {
-            throw new NotImplementedException();
+            var clientes = await _clienteRepo.ObtenerTodosAsync();
+            if (clientes == null || clientes.Count == 0)
+            {
+                throw new NotFoundException("No se encontraron clientes");
+            }
+
+            return clientes;
+        }
+
+        private static bool EsMismoCliente(Cliente cliente, Cliente entity)
+        {
+            return cliente.Nombre.ToLower() == entity.Nombre.ToLower()
+                && cliente.Apellido1.ToLower() == entity.Apellido1.ToLower()
+                && (cliente.Apellido2 ?? string.Empty).ToLower() == (entity.Apellido2 ?? string.Empty).ToLower();
         }
     }
 }

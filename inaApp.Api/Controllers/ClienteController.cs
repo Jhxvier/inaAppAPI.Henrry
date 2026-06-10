@@ -1,11 +1,12 @@
-﻿using inaApp.Common.Interfaces;
+﻿using inaApp.Common.Exceptions;
+using inaApp.Common.Interfaces;
 using inaApp.Entities;
-using inaApp.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inaApp.Api.Controllers
 {
+    [ApiController]
+    [Route("api/Cliente")]
     public class ClienteController : Controller
     {
 
@@ -18,78 +19,140 @@ namespace inaApp.Api.Controllers
 
         // GET: ClienteController
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            _clienteService.ObtenerTodosAsync();
-            return Ok("Prueba correcta");
+            try
+            {
+                var lista = await _clienteService.ObtenerTodosAsync();
+
+                if (lista == null || lista.Count == 0)
+                {
+                    return NotFound("No hay datos");
+                }
+
+                return Ok(lista);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, Contacte con el administrador");
+            }
         }
 
         // GET: ClienteController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
-        }
+            try
+            {
+                var cliente = await _clienteService.ObtenerPorIdAsync(id);
 
-        // GET: ClienteController/Create
-        public ActionResult Create()
-        {
-            return View();
+                return Ok(cliente);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, Contacte con el administrador");
+            }
         }
 
         // POST: ClienteController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create([FromBody] Cliente cliente)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (cliente == null)
+                {
+                    return BadRequest("El cliente es requerido");
+                }
+
+                cliente.Estado = true;
+                var nuevoCliente = await _clienteService.CrearAsync(cliente);
+                return Created("Cliente Creado", nuevoCliente);
             }
-            catch
+            catch (InvalidClientNameException ex)
             {
-                return View();
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidClientBirthDateException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (DuplicateNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, contacte con el administrador");
             }
         }
 
         // GET: ClienteController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ClienteController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Edit(int id, [FromBody] Cliente cliente)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                if (cliente == null)
+                {
+                    return BadRequest("El cliente es requerido");
+                }
 
-        // GET: ClienteController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
+                cliente.Id = id;
+                cliente.Estado = true;
+
+                var clienteActualizado = await _clienteService.ActualizarAsync(cliente);
+
+                return Ok(clienteActualizado);
+            }
+            catch (InvalidClientNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidClientBirthDateException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (DuplicateNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, contacte con el administrador");
+            }
         }
 
         // POST: ClienteController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (id <= 0)
+                {
+                    return BadRequest("Id no puede ser nulo");
+                }
+
+                var result = await _clienteService.EliminarAsync(id);
+
+                return result ? Ok("Cliente eliminado") : BadRequest("Cliente no encontrado");
             }
-            catch
+            catch (NotFoundException ex)
             {
-                return View();
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error, Contacte con el administrador");
             }
         }
     }

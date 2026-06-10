@@ -1,5 +1,7 @@
 ﻿using inaApp.Common.Interfaces;
+using inaApp.Data;
 using inaApp.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +12,86 @@ namespace inaApp.Repository
 {
     public class ClienteRepository : IGenericRepository<Cliente>
     {
-        public Task<Cliente> ActualizarAsync(Cliente entity)
+        private readonly ApplicationDbContext _dbContext;
+
+        public ClienteRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _dbContext = context;
         }
 
-        public Task<Cliente> CrearAsync(Cliente entity)
+        public async Task<Cliente> ActualizarAsync(Cliente entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _dbContext.Cliente.Update(entity);
+                await _dbContext.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<bool> EliminarAsync(int id)
+        public async Task<Cliente> CrearAsync(Cliente entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _dbContext.Cliente.Add(entity);
+                await _dbContext.SaveChangesAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<Cliente> ObtenerPorIdAsync(int id)
+        public async Task<bool> EliminarAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var cliente = await ObtenerPorIdAsync(id);
+
+                if (cliente == null)
+                {
+                    return false;
+                }
+
+                cliente.Estado = false;
+                _dbContext.Cliente.Update(cliente);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<List<Cliente>> ObtenerTodosAsync()
+        public async Task<Cliente> ObtenerPorIdAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _dbContext.Cliente.Where(x => x.Id == id && x.Estado == true).SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<Cliente>> ObtenerTodosAsync()
+        {
+            try
+            {
+                return await _dbContext.Cliente.AsNoTracking().Where(x => x.Estado == true).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

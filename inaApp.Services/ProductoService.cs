@@ -73,6 +73,16 @@ namespace inaApp.Services
 
         public async Task<bool> EliminarAsync(int id)
         {
+            //reglas de negocio para eliminar un producto
+
+            var pro = await _productoRepo.ObtenerPorIdAsync(id);
+
+            if (pro == null)
+            {
+                //string template = "El Producto con el id {x} no existe";
+                throw new NotFoundException($"El Producto con el id {id} no existe");
+            }
+
             return await _productoRepo.EliminarAsync(id);
         }
 
@@ -90,6 +100,14 @@ namespace inaApp.Services
 
         public async Task<List<Producto>> ObtenerTodosAsync()
         {
+            //reglas de negocio
+
+            var productos = await _productoRepo.ObtenerTodosAsync();
+             if (productos == null || productos.Count == 0)
+            {
+                throw new NotFoundException("No se encontraron productos");
+            }
+
             return await _productoRepo.ObtenerTodosAsync();
         }
     }

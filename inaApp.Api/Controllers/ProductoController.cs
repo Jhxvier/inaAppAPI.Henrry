@@ -1,4 +1,5 @@
-﻿using inaApp.Common.Interfaces;
+﻿using inaApp.Common.Exceptions;
+using inaApp.Common.Interfaces;
 using inaApp.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,12 +52,15 @@ namespace inaApp.Api.Controllers
             try
             {
                 var producto = await _productoService.ObtenerPorIdAsync(id);
-                if (producto == null)
-                {
-                    return NotFound("Producto no encontrado");
-                }
+
                 return Ok(producto);
             }
+
+            catch (NotFoundException ex)
+            {
+               return NotFound(ex.Message);
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, "Error, Contacte con el administrador");
@@ -87,19 +91,23 @@ namespace inaApp.Api.Controllers
             //editar un producto
             try
             {
-                if (producto == null)
-                {
-                    return BadRequest("El producto no puede ser nulo");
-                }
-
-                if (id != producto.Id)
-                {
-                    return BadRequest("El id de la URL no coincide con el id del producto");
-                }
+                producto.estado = true; // Asegura que el producto esté activo al editarlo
 
                 var productoActualizado = await _productoService.ActualizarAsync(producto);
 
                 return Ok(productoActualizado);
+            }
+            catch(InvalidPriceException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(DuplicateNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(InvalidStockException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch
             {

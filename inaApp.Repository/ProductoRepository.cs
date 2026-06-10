@@ -82,14 +82,7 @@ namespace inaApp.Repository
         {
             try
             {
-                var entity = await _dbContext.Producto.Where(x=> x.Id == id && x.estado == true).SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)
-
-                if (entity is null) // si el producto no existe o está eliminado, retornar null
-                {
-                    throw new Exception("Producto no encontrado"); // lanzar una excepción indicando que el producto no fue encontrado
-                }
-
-                return entity; // retornar el producto encontrado
+              return await _dbContext.Producto.Where(x=> x.Id == id && x.estado == true).SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)
             }
             catch (Exception ex)
             {
@@ -102,7 +95,7 @@ namespace inaApp.Repository
 
             try
             {
-                return await _dbContext.Producto.Where(x => x.estado == true).ToListAsync(); // expresion lambda para filtrar los productos activos (estado == true)
+                return await _dbContext.Producto.AsNoTracking().Where(x => x.estado == true).ToListAsync(); // expresion lambda para filtrar los productos activos (estado == true)
             }
             catch (Exception ex)
             {

@@ -42,3 +42,5 @@ C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\refint\inaApp.Services.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.pdb
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\ref\inaApp.Services.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.pdb

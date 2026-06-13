@@ -1,6 +1,8 @@
 ﻿using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
+using inaApp.DTOs.Cliente;
 using inaApp.Entities;
+using inaApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace inaApp.Api.Controllers
@@ -10,9 +12,9 @@ namespace inaApp.Api.Controllers
     public class ClienteController : Controller
     {
 
-        private readonly IGenericServices<Cliente> _clienteService;
+        private readonly IGenericServices<ClienteResponseDTO, ClienteCreateDTO, ClienteUpdateDTO> _clienteService;
 
-        public ClienteController(IGenericServices<Cliente> clienteService)
+        public ClienteController(IGenericServices<ClienteResponseDTO, ClienteCreateDTO, ClienteUpdateDTO> clienteService)
         {
             _clienteService = clienteService;
         }
@@ -69,17 +71,16 @@ namespace inaApp.Api.Controllers
 
         // POST: ClienteController/Create
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Cliente cliente)
+        public async Task<ActionResult> Create([FromBody] ClienteCreateDTO clienteDTO)
         {
             try
             {
-                if (cliente == null)
+                if (!ModelState.IsValid)
                 {
-                    return BadRequest("Debe enviar la información del cliente");
+                    return BadRequest(ModelState);
                 }
 
-                cliente.Estado = true;
-                var nuevoCliente = await _clienteService.CrearAsync(cliente);
+                var nuevoCliente = await _clienteService.CrearAsync(clienteDTO);
                 return Created("Cliente Creado", nuevoCliente);
             }
             catch (InvalidClientNameException ex)
@@ -102,24 +103,11 @@ namespace inaApp.Api.Controllers
 
         // GET: ClienteController/Edit/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Edit(int id, [FromBody] Cliente cliente)
+        public async Task<ActionResult> Edit(int id, [FromBody] ClienteUpdateDTO clienteDTO)
         {
             try
             {
-                if (id <= 0)
-                {
-                    return BadRequest("El id del cliente debe ser mayor a 0");
-                }
-
-                if (cliente == null)
-                {
-                    return BadRequest("Debe enviar la información del cliente");
-                }
-
-                cliente.IdCliente = id;
-                cliente.Estado = true;
-
-                var clienteActualizado = await _clienteService.ActualizarAsync(cliente);
+                var clienteActualizado = await _clienteService.ActualizarAsync(clienteDTO);
 
                 return Ok(clienteActualizado);
             }

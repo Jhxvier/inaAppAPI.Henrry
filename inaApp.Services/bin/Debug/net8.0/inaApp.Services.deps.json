@@ -9,6 +9,7 @@
       "inaApp.Services/1.0.0": {
         "dependencies": {
           "inaApp.Common": "1.0.0",
+          "inaApp.DTOs": "1.0.0",
           "inaApp.Entities": "1.0.0",
           "inaApp.Repository": "1.0.0"
         },
@@ -592,6 +593,17 @@
           }
         }
       },
+      "inaApp.DTOs/1.0.0": {
+        "dependencies": {
+          "inaApp.Common": "1.0.0"
+        },
+        "runtime": {
+          "inaApp.DTOs.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "inaApp.Entities/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.16",
@@ -925,6 +937,11 @@
       "sha512": ""
     },
     "inaApp.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "inaApp.DTOs/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

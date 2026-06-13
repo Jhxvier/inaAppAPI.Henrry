@@ -1,5 +1,6 @@
 ﻿using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
+using inaApp.DTOs.Producto;
 using inaApp.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace inaApp.Api.Controllers
     public class ProductoController : Controller
     {
 
-        private readonly IGenericServices<Producto> _productoService;
+        private readonly IGenericServices<ProductoResponseDTO, ProductoCreateDTO, ProductoUpdateDTO> _productoService;
 
-        public ProductoController(IGenericServices<Producto> productoService)
+        public ProductoController(IGenericServices<ProductoResponseDTO, ProductoCreateDTO, ProductoUpdateDTO> productoService)
         {
             _productoService = productoService;
         }
@@ -69,11 +70,18 @@ namespace inaApp.Api.Controllers
 
         // POST: ProductoController/Create
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] Producto producto)
+        public async Task<ActionResult> Create([FromBody] ProductoCreateDTO productoDTO)
         {
             try
             {
-                var nuevoProducto = await _productoService.CrearAsync(producto);
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var nuevoProducto = await _productoService.CrearAsync(productoDTO);
+
                 return Created("Producto Creado", nuevoProducto);
             }
             catch (InvalidPriceException ex)
@@ -98,14 +106,13 @@ namespace inaApp.Api.Controllers
 
         // GET: ProductoController/Edit/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Edit(int id, [FromBody] Producto producto)
+        public async Task<ActionResult> Edit(int id, [FromBody] ProductoUpdateDTO productoDTO)
         {
             //editar un producto
             try
             {
-                producto.estado = true; // Asegura que el producto esté activo al editarlo
 
-                var productoActualizado = await _productoService.ActualizarAsync(producto);
+                var productoActualizado = await _productoService.ActualizarAsync(productoDTO);
 
                 return Ok(productoActualizado);
             }

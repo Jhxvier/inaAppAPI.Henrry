@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
+using inaApp.DTOs.Producto;
 using inaApp.Entities;
 
 namespace inaApp.Services
-{
-    public class ProductoService : IGenericServices<Producto>
+{ 
+    public class ProductoService : IGenericServices<ProductoResponseDTO, ProductoCreateDTO, ProductoUpdateDTO>
     {
         private readonly IGenericRepository<Producto> _productoRepo;
 
@@ -18,7 +19,7 @@ namespace inaApp.Services
             _productoRepo = productoRepo;
         }
 
-        public async Task<Producto> ActualizarAsync(Producto entity)
+        public async Task<ProductoResponseDTO> ActualizarAsync(ProductoUpdateDTO entity)
         {
             //reglas de negocio
 
@@ -41,10 +42,14 @@ namespace inaApp.Services
                 throw new InvalidStockException("El stock no puede ser negativo");
             }
 
-            return await _productoRepo.ActualizarAsync(entity);
+            //convertir el DTO a entidad y guardarlo en la base de datos
+
+            var productoActualizar = await _productoRepo.ActualizarAsync(new Producto());
+
+            return new ProductoResponseDTO();
         }
 
-        public async Task<Producto> CrearAsync(Producto entity)
+        public async Task<ProductoResponseDTO> CrearAsync(ProductoCreateDTO entity)
         {
             //reglas de negocio
 
@@ -67,8 +72,12 @@ namespace inaApp.Services
                 throw new InvalidStockException("El stock no puede ser negativo");
             }
 
+            //convertir el DTO a entidad y guardarlo en la base de datos
+            var productoCreado = await _productoRepo.CrearAsync(new Producto());
 
-            return await _productoRepo.CrearAsync(entity);
+            //convertir la entidad a DTO response y retornarlo producto response DTO
+
+            return new ProductoResponseDTO();
         }
 
         public async Task<bool> EliminarAsync(int id)
@@ -86,7 +95,7 @@ namespace inaApp.Services
             return await _productoRepo.EliminarAsync(id);
         }
 
-        public async Task<Producto> ObtenerPorIdAsync(int id)
+        public async Task<ProductoResponseDTO> ObtenerPorIdAsync(int id)
         {
             var pro = await _productoRepo.ObtenerPorIdAsync(id);
 
@@ -95,10 +104,10 @@ namespace inaApp.Services
                 //string template = "El Producto con el id {x} no existe";
                 throw new NotFoundException($"El Producto con el id {id} no existe");
             }
-            return pro;
+            return new ProductoResponseDTO();
         }
 
-        public async Task<List<Producto>> ObtenerTodosAsync()
+        public async Task<List<ProductoResponseDTO>> ObtenerTodosAsync()
         {
             //reglas de negocio
 
@@ -108,7 +117,9 @@ namespace inaApp.Services
                 throw new NotFoundException("No se encontraron productos");
             }
 
-            return await _productoRepo.ObtenerTodosAsync();
+             return new List<ProductoResponseDTO>();
+
+
         }
     }
 }

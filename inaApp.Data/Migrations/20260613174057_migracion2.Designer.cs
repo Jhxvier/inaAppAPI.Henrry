@@ -12,8 +12,8 @@ using inaApp.Data;
 namespace inaApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260610181144_entidadCliente")]
-    partial class entidadCliente
+    [Migration("20260613174057_migracion2")]
+    partial class migracion2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,10 +39,12 @@ namespace inaApp.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Apellido2")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("CorreoElectronico")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -63,6 +65,7 @@ namespace inaApp.Data.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Telefono")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
@@ -74,7 +77,7 @@ namespace inaApp.Data.Migrations
                     b.HasIndex("TipoIdentificacion", "NumeroIdentificacion")
                         .IsUnique();
 
-                    b.ToTable("Cliente");
+                    b.ToTable("tb_Cliente");
                 });
 
             modelBuilder.Entity("inaApp.Entities.Producto", b =>
@@ -87,7 +90,8 @@ namespace inaApp.Data.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
@@ -97,7 +101,8 @@ namespace inaApp.Data.Migrations
 
                     b.Property<string>("descripcion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("estado")
                         .HasColumnType("bit");

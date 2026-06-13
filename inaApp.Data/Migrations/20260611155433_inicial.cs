@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace inaApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class entidadCliente : Migration
+    public partial class inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Cliente",
+                name: "tb_Cliente",
                 columns: table => new
                 {
                     IdCliente = table.Column<int>(type: "int", nullable: false)
@@ -29,12 +29,29 @@ namespace inaApp.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cliente", x => x.IdCliente);
+                    table.PrimaryKey("PK_tb_Cliente", x => x.IdCliente);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tb_Producto",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    estado = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_Producto", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cliente_TipoIdentificacion_NumeroIdentificacion",
-                table: "Cliente",
+                name: "IX_tb_Cliente_TipoIdentificacion_NumeroIdentificacion",
+                table: "tb_Cliente",
                 columns: new[] { "TipoIdentificacion", "NumeroIdentificacion" },
                 unique: true);
         }
@@ -43,7 +60,10 @@ namespace inaApp.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Cliente");
+                name: "tb_Cliente");
+
+            migrationBuilder.DropTable(
+                name: "tb_Producto");
         }
     }
 }

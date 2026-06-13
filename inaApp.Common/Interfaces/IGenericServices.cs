@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace inaApp.Common.Interfaces
 {
-    public interface IGenericServices<E>
+    public interface IGenericServices<TResponse, TCreate, TUpdate>
     {
-        Task<List<E>> ObtenerTodosAsync();
-        Task<E> ObtenerPorIdAsync(int id);
-        Task<E> CrearAsync(E entity);
-        Task<E> ActualizarAsync(E entity);
+        Task<List<TResponse>> ObtenerTodosAsync();
+        Task<TResponse> ObtenerPorIdAsync(int id);
+        Task<TResponse> CrearAsync(TCreate entity);
+        Task<TResponse> ActualizarAsync(TUpdate entity);
         Task<bool> EliminarAsync(int id);
     }
 }

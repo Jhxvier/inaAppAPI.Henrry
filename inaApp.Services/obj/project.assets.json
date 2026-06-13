@@ -1029,6 +1029,19 @@
           "bin/placeholder/inaApp.Data.dll": {}
         }
       },
+      "inaApp.DTOs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "inaApp.Common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/inaApp.DTOs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/inaApp.DTOs.dll": {}
+        }
+      },
       "inaApp.Entities/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -2853,6 +2866,11 @@
       "path": "../inaApp.Data/inaApp.Data.csproj",
       "msbuildProject": "../inaApp.Data/inaApp.Data.csproj"
     },
+    "inaApp.DTOs/1.0.0": {
+      "type": "project",
+      "path": "../inaApp.DTOs/inaApp.DTOs.csproj",
+      "msbuildProject": "../inaApp.DTOs/inaApp.DTOs.csproj"
+    },
     "inaApp.Entities/1.0.0": {
       "type": "project",
       "path": "../inaApp.Entities/inaApp.Entities.csproj",
@@ -2867,6 +2885,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "inaApp.Common >= 1.0.0",
+      "inaApp.DTOs >= 1.0.0",
       "inaApp.Entities >= 1.0.0",
       "inaApp.Repository >= 1.0.0"
     ]
@@ -2906,6 +2925,9 @@
           "projectReferences": {
             "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj": {
               "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Common\\inaApp.Common.csproj"
+            },
+            "C:\\INA\\C# NET CORE\\inaApp\\inaApp.DTOs\\inaApp.DTOs.csproj": {
+              "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.DTOs\\inaApp.DTOs.csproj"
             },
             "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj": {
               "projectPath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj"

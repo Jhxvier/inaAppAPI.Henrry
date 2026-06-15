@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
 using inaApp.DTOs.Producto;
@@ -13,10 +14,12 @@ namespace inaApp.Services
     public class ProductoService : IGenericServices<ProductoResponseDTO, ProductoCreateDTO, ProductoUpdateDTO>
     {
         private readonly IGenericRepository<Producto> _productoRepo;
+        private readonly IMapper _mapper;
 
-        public ProductoService(IGenericRepository<Producto> productoRepo)
+        public ProductoService(IGenericRepository<Producto> productoRepo, IMapper mapper)
         {
             _productoRepo = productoRepo;
+            _mapper = mapper;
         }
 
         public async Task<ProductoResponseDTO> ActualizarAsync(ProductoUpdateDTO entity)
@@ -44,9 +47,15 @@ namespace inaApp.Services
 
             //convertir el DTO a entidad y guardarlo en la base de datos
 
-            var productoActualizar = await _productoRepo.ActualizarAsync(new Producto());
+            var producto = _mapper.Map<Producto>(entity);
+            
+            //actualizar producto
 
-            return new ProductoResponseDTO();
+            producto = await _productoRepo.ActualizarAsync(producto);
+
+            var productoResponse = _mapper.Map<ProductoResponseDTO>(producto);
+
+            return productoResponse;
         }
 
         public async Task<ProductoResponseDTO> CrearAsync(ProductoCreateDTO entity)
@@ -73,26 +82,33 @@ namespace inaApp.Services
             }
 
             //convertir el DTO a entidad y guardarlo en la base de datos
-            var productoCreado = await _productoRepo.CrearAsync(new Producto());
+            Producto producto = _mapper.Map<Producto>(entity);
 
-            //convertir la entidad a DTO response y retornarlo producto response DTO
+            //guardar en la base de datos
+            producto = await _productoRepo.CrearAsync(producto);
 
-            return new ProductoResponseDTO();
+
+            //convertir la entidad a DTO response y retornarla producto response DTO
+            ProductoResponseDTO productoResponseDTO = _mapper.Map<ProductoResponseDTO>(producto);
+
+            return productoResponseDTO;
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
             //reglas de negocio para eliminar un producto
 
-            var pro = await _productoRepo.ObtenerPorIdAsync(id);
+            List<Producto> listaProductos = await _productoRepo.ObtenerTodosAsync();
 
-            if (pro == null)
+            if (listaProductos == null)
             {
                 //string template = "El Producto con el id {x} no existe";
                 throw new NotFoundException($"El Producto con el id {id} no existe");
             }
 
+            //Retornamos si se pudo eliminar
             return await _productoRepo.EliminarAsync(id);
+
         }
 
         public async Task<ProductoResponseDTO> ObtenerPorIdAsync(int id)
@@ -104,21 +120,32 @@ namespace inaApp.Services
                 //string template = "El Producto con el id {x} no existe";
                 throw new NotFoundException($"El Producto con el id {id} no existe");
             }
-            return new ProductoResponseDTO();
+
+            //convierte a dtos response
+            var productoResponse = _mapper.Map<ProductoResponseDTO>(pro);
+
+
+            return productoResponse;
         }
 
         public async Task<List<ProductoResponseDTO>> ObtenerTodosAsync()
         {
             //reglas de negocio
 
-            var productos = await _productoRepo.ObtenerTodosAsync();
-             if (productos == null || productos.Count == 0)
+            //Extraemos la lista de productos
+            List<Producto> listaProductos = await _productoRepo.ObtenerTodosAsync();
+
+
+            if (listaProductos == null || listaProductos.Count == 0)
             {
                 throw new NotFoundException("No se encontraron productos");
             }
 
-             return new List<ProductoResponseDTO>();
+            //Mapeamos la lista
+            List<ProductoResponseDTO> response = _mapper.Map<List<ProductoResponseDTO>>(listaProductos);
 
+            //Retornamos el response
+            return response;
 
         }
     }

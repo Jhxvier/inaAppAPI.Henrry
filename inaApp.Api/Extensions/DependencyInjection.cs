@@ -5,6 +5,7 @@ using inaApp.DTOs.Producto;
 using inaApp.Entities;
 using inaApp.Repository;
 using inaApp.Services;
+using inaApp.Services.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 namespace inaApp.Api.Extensions
@@ -21,7 +22,8 @@ namespace inaApp.Api.Extensions
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-
+            //profile auto mapper
+            services.AddAutoMapper(cfg => { },typeof(MappingProfile));
 
 
             //inyecciones de dependencia de servicios

@@ -1,7 +1,9 @@
-﻿using inaApp.Common.Enums;
+﻿using AutoMapper;
+using inaApp.Common.Enums;
 using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
 using inaApp.DTOs.Cliente;
+using inaApp.DTOs.Producto;
 using inaApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,12 @@ namespace inaApp.Services
     public class ClienteService : IGenericServices<ClienteResponseDTO, ClienteCreateDTO, ClienteUpdateDTO>
     {
         private readonly IGenericRepository<Cliente> _clienteRepo;
+        private readonly IMapper _mapper;
 
-        public ClienteService(IGenericRepository<Cliente> clienteRepo)
+        public ClienteService(IGenericRepository<Cliente> clienteRepo, IMapper mapper)
         {
             _clienteRepo = clienteRepo;
+            _mapper = mapper;
         }
 
         public async Task<ClienteResponseDTO> ActualizarAsync(ClienteUpdateDTO entity)
@@ -63,41 +67,24 @@ namespace inaApp.Services
                 throw new InvalidClientNameException("El teléfono del cliente es obligatorio");
             }
 
-            entity.NumeroIdentificacion = entity.NumeroIdentificacion.Trim();
-            entity.Nombre = entity.Nombre.Trim();
-            entity.Apellido1 = entity.Apellido1.Trim();
-            entity.Apellido2 = entity.Apellido2?.Trim();
-            entity.CorreoElectronico = entity.CorreoElectronico?.Trim();
-            entity.Telefono = entity.Telefono?.Trim();
-
+          
             var clienteActual = await _clienteRepo.ObtenerPorIdAsync(entity.IdCliente);
             if (clienteActual == null)
             {
                 throw new NotFoundException($"No se puede actualizar el cliente porque el id {entity.IdCliente} no existe");
             }
 
-            //identificación no repetida
-            var clientes = await _clienteRepo.ObtenerTodosAsync();
-
-
-            //validar que no exista otro cliente con la misma identificación
-
-            if (clientes.Any(c =>
-                c.IdCliente != entity.IdCliente &&
-                c.TipoIdentificacion == entity.TipoIdentificacion &&
-                string.Equals(
-                    c.NumeroIdentificacion?.Trim(),
-                    entity.NumeroIdentificacion?.Trim(), StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new DuplicateIdentificationException(
-                    $"Ya existe otro cliente con la identificación {entity.NumeroIdentificacion}");
-            }
-
-
             //convertir el DTO a entidad y guardarlo en la base de datos
-            var clienteActualizado = _clienteRepo.ActualizarAsync(new Cliente());
 
-            return new ClienteResponseDTO();
+            var cliente = _mapper.Map<Cliente>(entity);
+
+            //actualizar cliente
+
+            cliente = await _clienteRepo.ActualizarAsync(cliente);
+
+            var clienteResponse = _mapper.Map<ClienteResponseDTO>(cliente);
+
+            return clienteResponse;
         }
 
         public async Task<ClienteResponseDTO> CrearAsync(ClienteCreateDTO entity)
@@ -155,14 +142,6 @@ namespace inaApp.Services
                     "El teléfono del cliente es obligatorio");
             }
 
-            // Limpiar espacios
-            entity.NumeroIdentificacion = entity.NumeroIdentificacion.Trim();
-            entity.Nombre = entity.Nombre.Trim();
-            entity.Apellido1 = entity.Apellido1.Trim();
-            entity.Apellido2 = entity.Apellido2.Trim();
-            entity.CorreoElectronico = entity.CorreoElectronico.Trim();
-            entity.Telefono = entity.Telefono.Trim();
-
             // Obtener los clientes existentes
             var clientes = await _clienteRepo.ObtenerTodosAsync();
 
@@ -179,45 +158,65 @@ namespace inaApp.Services
                     $"{entity.NumeroIdentificacion}");
             }
 
-            // Convertir el DTO a entidad
-            var clienteCreado = _clienteRepo.CrearAsync(new Cliente());
+            //convertir el DTO a entidad y guardarlo en la base de datos
+            Cliente cliente = _mapper.Map<Cliente>(entity);
 
-            return new ClienteResponseDTO();
+            //guardar en la base de datos
+            cliente = await _clienteRepo.CrearAsync(cliente);
+
+
+            //convertir la entidad a DTO response y retornarla producto response DTO
+            ClienteResponseDTO clienteResponseDTO = _mapper.Map<ClienteResponseDTO>(cliente);
+
+            return clienteResponseDTO;
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
-            var cliente = await _clienteRepo.ObtenerPorIdAsync(id);
+            List<Cliente> listaClientes = await _clienteRepo.ObtenerTodosAsync();
 
-            if (cliente == null)
+            if (listaClientes == null)
             {
-                throw new NotFoundException($"El cliente con el id {id} no existe");
+                //string template = "El Cliente con el id {x} no existe";
+                throw new NotFoundException($"El Cliente con el id {id} no existe");
             }
 
+            //Retornamos si se pudo eliminar
             return await _clienteRepo.EliminarAsync(id);
         }
 
         public async Task<ClienteResponseDTO> ObtenerPorIdAsync(int id)
         {
-            var cliente = await _clienteRepo.ObtenerPorIdAsync(id);
+            var listaClientes = await _clienteRepo.ObtenerPorIdAsync(id);
 
-            if (cliente == null)
+            if (listaClientes == null)
             {
-                throw new NotFoundException($"El cliente con el id {id} no existe");
+                //string template = "El Cliente con el id {x} no existe";
+                throw new NotFoundException($"El Cliente con el id {id} no existe");
             }
 
-            return new ClienteResponseDTO();
+            //convierte a dtos response
+            var clienteResponse = _mapper.Map<ClienteResponseDTO>(listaClientes);
+
+
+            return clienteResponse;
         }
 
         public async Task<List<ClienteResponseDTO>> ObtenerTodosAsync()
         {
-            var clientes = await _clienteRepo.ObtenerTodosAsync();
-            if (clientes == null || clientes.Count == 0)
+            List<Cliente> listaClientes = await _clienteRepo.ObtenerTodosAsync();
+
+
+            if (listaClientes == null || listaClientes.Count == 0)
             {
                 throw new NotFoundException("No se encontraron clientes");
             }
 
-            return new List<ClienteResponseDTO>();
+            //Mapeamos la lista
+            List<ClienteResponseDTO> response = _mapper.Map<List<ClienteResponseDTO>>(listaClientes);
+
+            //Retornamos el response
+            return response;
         }
 
     }

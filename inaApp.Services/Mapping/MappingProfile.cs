@@ -30,6 +30,8 @@ namespace inaApp.Services.Mapping
             //ENTITY A DTOs Response
 
             CreateMap<Producto, ProductoResponseDTO>();
+                //.ForMember(destino => destino.CategoriaNombre, opcion => opcion.MapFrom(origen => origen.Categoria.Nombre));
+
             CreateMap<Cliente, ClienteResponseDTO>();
 
 

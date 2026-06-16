@@ -19,10 +19,18 @@ namespace inaApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<Producto>()
+                .HasOne(producto => producto.Categoria)
+                .WithMany(categoria => categoria.Productos)
+                .HasForeignKey(producto => producto.CategoriaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<Producto> Producto { get; set; }
+        public DbSet<Categoria> Categoria { get; set; }
         public DbSet<Cliente> Cliente { get; set; }
 
     }

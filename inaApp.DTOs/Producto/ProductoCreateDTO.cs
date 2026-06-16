@@ -21,6 +21,10 @@ namespace inaApp.DTOs.Producto
         [Required(ErrorMessage = "El stock del producto es obligatorio")]
         [Range(1, int.MaxValue, ErrorMessage = "El stock del producto no puede ser negativo")]
         public int Stock { get; set; }
+
+        [Required(ErrorMessage = "La categoría del producto es obligatoria")]
+        public int CategoriaId { get; set; }
+
         [StringLength(500, ErrorMessage = "La descripción del producto no puede tener más de 500 caracteres")]
         public string descripcion { get; set; }
     }

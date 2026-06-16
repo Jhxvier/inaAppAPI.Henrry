@@ -31,7 +31,7 @@ namespace inaApp.Repository
             {
                 _dbContext.Producto.Update(entity); // actualizar el producto en el contexto de la base de datos
                 await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
-                return entity; // retornar el producto actualizado
+                return await ObtenerPorIdAsync(entity.Id); // retornar el producto actualizado con su categoría
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace inaApp.Repository
             {
                  _dbContext.Producto.Add(entity); // agregar el nuevo producto al contexto de la base de datos
                 await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
-                return entity; // retornar el producto creado
+                return await ObtenerPorIdAsync(entity.Id); // retornar el producto creado con su categoría
             }
             catch (Exception ex)
             {
@@ -82,7 +82,10 @@ namespace inaApp.Repository
         {
             try
             {
-              return await _dbContext.Producto.Where(x=> x.Id == id && x.estado == true).SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)
+                return await _dbContext.Producto
+                      .Include(x => x.Categoria)
+                      .Where(x => x.Id == id && x.estado == true)
+                      .SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)
             }
             catch (Exception ex)
             {
@@ -95,7 +98,11 @@ namespace inaApp.Repository
 
             try
             {
-                return await _dbContext.Producto.AsNoTracking().Where(x => x.estado == true).ToListAsync(); // expresion lambda para filtrar los productos activos (estado == true)
+                return await _dbContext.Producto
+                    .AsNoTracking()
+                    .Include(x => x.Categoria)
+                    .Where(x => x.estado == true)
+                    .ToListAsync(); // expresion lambda para filtrar los productos activos (estado == true)
             }
             catch (Exception ex)
             {

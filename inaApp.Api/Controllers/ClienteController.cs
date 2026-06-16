@@ -25,6 +25,7 @@ namespace inaApp.Api.Controllers
         {
             try
             {
+
                 var lista = await _clienteService.ObtenerTodosAsync();
 
                 if (lista == null || lista.Count == 0)
@@ -107,6 +108,24 @@ namespace inaApp.Api.Controllers
         {
             try
             {
+
+                if (id <= 0)
+                {
+                    return BadRequest("El id del cliente debe ser mayor a 0");
+                }
+
+                if (clienteDTO == null)
+                {
+                    return BadRequest("Debe enviar la información del cliente");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                clienteDTO.IdCliente = id;
+
                 var clienteActualizado = await _clienteService.ActualizarAsync(clienteDTO);
 
                 return Ok(clienteActualizado);

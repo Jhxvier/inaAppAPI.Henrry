@@ -74,7 +74,7 @@ namespace inaApp.Repository
         {
             try
             {
-                return await _dbContext.Cliente.Where(x => x.IdCliente == id && x.Estado == true).SingleOrDefaultAsync();
+                return await _dbContext.Cliente.AsNoTracking().Where(x => x.IdCliente == id && x.Estado == true).SingleOrDefaultAsync();
             }
             catch (Exception ex)
             {

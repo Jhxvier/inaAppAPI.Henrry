@@ -35,7 +35,7 @@ namespace inaApp.Services
                 throw new InvalidClientNameException("Debe enviar la información del cliente");
             }
 
-            if (!Enum.IsDefined(typeof(Enums), entity.TipoIdentificacion))
+            if (!Enum.IsDefined(typeof(TipoIdentificacion), entity.TipoIdentificacion))
             {
                 throw new InvalidClientIdentificationException("Debe indicar un tipo de identificación válido para el cliente");
             }
@@ -76,7 +76,30 @@ namespace inaApp.Services
 
             //convertir el DTO a entidad y guardarlo en la base de datos
 
+            var clientes = await _clienteRepo.ObtenerTodosAsync();
+            if (clientes.Any(c =>
+                c.IdCliente != entity.IdCliente &&
+                c.TipoIdentificacion == entity.TipoIdentificacion &&
+                string.Equals(
+                    c.NumeroIdentificacion?.Trim(),
+                    entity.NumeroIdentificacion?.Trim(),
+                    StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new DuplicateIdentificationException(
+                    $"Ya existe un cliente con la identificación {entity.NumeroIdentificacion}");
+            }
+
             var cliente = _mapper.Map<Cliente>(entity);
+
+            cliente.NumeroIdentificacion = entity.NumeroIdentificacion.Trim();
+            cliente.Nombre = entity.Nombre.Trim();
+            cliente.Apellido1 = entity.Apellido1.Trim();
+            cliente.Apellido2 = entity.Apellido2?.Trim();
+            cliente.CorreoElectronico = entity.CorreoElectronico?.Trim();
+            cliente.Telefono = entity.Telefono?.Trim();
+            cliente.Estado = clienteActual.Estado;
+            cliente.FechaCreacion = clienteActual.FechaCreacion;
+
 
             //actualizar cliente
 

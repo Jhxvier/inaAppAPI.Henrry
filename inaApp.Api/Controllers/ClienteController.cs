@@ -28,7 +28,7 @@ namespace inaApp.Api.Controllers
 
                 var lista = await _clienteService.ObtenerTodosAsync();
 
-                if (lista == null || lista.Count == 0)
+                if (lista.Data.Count == 0)
                 {
                     return NotFound("No hay datos");
                 }
@@ -165,7 +165,7 @@ namespace inaApp.Api.Controllers
 
                 var result = await _clienteService.EliminarAsync(id);
 
-                return result ? Ok("Cliente eliminado") : BadRequest("Cliente no encontrado");
+                return result.Data ? Ok("Cliente eliminado") : BadRequest("Cliente no encontrado");
             }
             catch (NotFoundException ex)
             {

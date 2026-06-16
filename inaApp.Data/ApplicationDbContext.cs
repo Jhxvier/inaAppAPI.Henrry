@@ -15,6 +15,13 @@ namespace inaApp.Data
 
         }
 
+        //fluent api
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Producto> Producto { get; set; }
         public DbSet<Cliente> Cliente { get; set; }
 

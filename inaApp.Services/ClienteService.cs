@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static inaApp.Common.Enums.Enums;
+using inaApp.Common.Response;
 
 namespace inaApp.Services
 {
@@ -25,7 +26,7 @@ namespace inaApp.Services
             _mapper = mapper;
         }
 
-        public async Task<ClienteResponseDTO> ActualizarAsync(ClienteUpdateDTO entity)
+        public async Task<Response<ClienteResponseDTO>> ActualizarAsync(ClienteUpdateDTO entity)
         {
             //reglas de negocio
             //validar campos del cliente
@@ -105,12 +106,17 @@ namespace inaApp.Services
 
             cliente = await _clienteRepo.ActualizarAsync(cliente);
 
-            var clienteResponse = _mapper.Map<ClienteResponseDTO>(cliente);
+            //actualizar cliente
 
-            return clienteResponse;
+            return new Response<ClienteResponseDTO>
+            {
+                Data = _mapper.Map<ClienteResponseDTO>(cliente),
+                Message = "Cliente actualizado correctamente",
+                Success = true
+            };
         }
 
-        public async Task<ClienteResponseDTO> CrearAsync(ClienteCreateDTO entity)
+        public async Task<Response<ClienteResponseDTO>> CrearAsync(ClienteCreateDTO entity)
         {
             // Reglas de negocio
             // Validar campos del cliente
@@ -188,13 +194,16 @@ namespace inaApp.Services
             cliente = await _clienteRepo.CrearAsync(cliente);
 
 
-            //convertir la entidad a DTO response y retornarla producto response DTO
-            ClienteResponseDTO clienteResponseDTO = _mapper.Map<ClienteResponseDTO>(cliente);
 
-            return clienteResponseDTO;
+            return new Response<ClienteResponseDTO>
+            {
+                Data = _mapper.Map<ClienteResponseDTO>(cliente),
+                Message = "Cliente actualizado correctamente",
+                Success = true
+            };
         }
 
-        public async Task<bool> EliminarAsync(int id)
+        public async Task<Response<bool>> EliminarAsync(int id)
         {
             List<Cliente> listaClientes = await _clienteRepo.ObtenerTodosAsync();
 
@@ -204,11 +213,15 @@ namespace inaApp.Services
                 throw new NotFoundException($"El Cliente con el id {id} no existe");
             }
 
-            //Retornamos si se pudo eliminar
-            return await _clienteRepo.EliminarAsync(id);
+            return new Response<bool>
+            {
+                Data = await _clienteRepo.EliminarAsync(id),
+                Message = "Cliente eliminado exitosamente",
+                Success = true
+            };
         }
 
-        public async Task<ClienteResponseDTO> ObtenerPorIdAsync(int id)
+        public async Task<Response<ClienteResponseDTO>> ObtenerPorIdAsync(int id)
         {
             var listaClientes = await _clienteRepo.ObtenerPorIdAsync(id);
 
@@ -218,28 +231,31 @@ namespace inaApp.Services
                 throw new NotFoundException($"El Cliente con el id {id} no existe");
             }
 
-            //convierte a dtos response
-            var clienteResponse = _mapper.Map<ClienteResponseDTO>(listaClientes);
-
-
-            return clienteResponse;
+            return new Response<ClienteResponseDTO>
+            {
+                Data = _mapper.Map<ClienteResponseDTO>(listaClientes),
+                Message = "Cliente obtenido exitosamente",
+                Success = true
+            };
         }
 
-        public async Task<List<ClienteResponseDTO>> ObtenerTodosAsync()
+        public async Task<Response<List<ClienteResponseDTO>>> ObtenerTodosAsync()
         {
+            //Extraemos la lista de productos
             List<Cliente> listaClientes = await _clienteRepo.ObtenerTodosAsync();
 
-
-            if (listaClientes == null || listaClientes.Count == 0)
+            //si la lista esta vacia
+            if (listaClientes.Count == 0)
             {
                 throw new NotFoundException("No se encontraron clientes");
-            }
+            };
 
-            //Mapeamos la lista
-            List<ClienteResponseDTO> response = _mapper.Map<List<ClienteResponseDTO>>(listaClientes);
-
-            //Retornamos el response
-            return response;
+            return new Response<List<ClienteResponseDTO>>
+            {
+                Data = _mapper.Map<List<ClienteResponseDTO>>(listaClientes),
+                Message = "Cliente obtenido exitosamente",
+                Success = true
+            };
         }
 
     }

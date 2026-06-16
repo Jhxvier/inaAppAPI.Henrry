@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using inaApp.Common.Exceptions;
 using inaApp.Common.Interfaces;
+using inaApp.Common.Response;
 using inaApp.DTOs.Producto;
 using inaApp.Entities;
 
@@ -22,7 +23,7 @@ namespace inaApp.Services
             _mapper = mapper;
         }
 
-        public async Task<ProductoResponseDTO> ActualizarAsync(ProductoUpdateDTO entity)
+        public async Task<Response<ProductoResponseDTO>> ActualizarAsync(ProductoUpdateDTO entity)
         {
             //reglas de negocio
 
@@ -53,12 +54,15 @@ namespace inaApp.Services
 
             producto = await _productoRepo.ActualizarAsync(producto);
 
-            var productoResponse = _mapper.Map<ProductoResponseDTO>(producto);
-
-            return productoResponse;
+            return new Response<ProductoResponseDTO>
+            {
+                Data = _mapper.Map<ProductoResponseDTO>(producto),
+                Message = "Producto actualizado correctamente",
+                Success = true
+            };
         }
 
-        public async Task<ProductoResponseDTO> CrearAsync(ProductoCreateDTO entity)
+        public async Task<Response<ProductoResponseDTO>> CrearAsync(ProductoCreateDTO entity)
         {
             //reglas de negocio
 
@@ -88,13 +92,15 @@ namespace inaApp.Services
             producto = await _productoRepo.CrearAsync(producto);
 
 
-            //convertir la entidad a DTO response y retornarla producto response DTO
-            ProductoResponseDTO productoResponseDTO = _mapper.Map<ProductoResponseDTO>(producto);
-
-            return productoResponseDTO;
+            return new Response<ProductoResponseDTO>
+            {
+                Data = _mapper.Map<ProductoResponseDTO>(producto),
+                Message = "Producto creado correctamente",
+                Success = true
+            };
         }
 
-        public async Task<bool> EliminarAsync(int id)
+        public async Task<Response<bool>> EliminarAsync(int id)
         {
             //reglas de negocio para eliminar un producto
 
@@ -107,11 +113,16 @@ namespace inaApp.Services
             }
 
             //Retornamos si se pudo eliminar
-            return await _productoRepo.EliminarAsync(id);
+            return new Response<bool>
+            {
+                Data = await _productoRepo.EliminarAsync(id),
+                Message = "Producto eliminado exitosamente",
+                Success = true
+            };
 
         }
 
-        public async Task<ProductoResponseDTO> ObtenerPorIdAsync(int id)
+        public async Task<Response<ProductoResponseDTO>> ObtenerPorIdAsync(int id)
         {
             var pro = await _productoRepo.ObtenerPorIdAsync(id);
 
@@ -122,30 +133,33 @@ namespace inaApp.Services
             }
 
             //convierte a dtos response
-            var productoResponse = _mapper.Map<ProductoResponseDTO>(pro);
 
-
-            return productoResponse;
+            return new Response<ProductoResponseDTO>
+            {
+                Data = _mapper.Map<ProductoResponseDTO>(pro),
+                Message = "Producto obtenido exitosamente",
+                Success = true
+            };
         }
 
-        public async Task<List<ProductoResponseDTO>> ObtenerTodosAsync()
+        public async Task<Response<List<ProductoResponseDTO>>> ObtenerTodosAsync()
         {
             //reglas de negocio
 
             //Extraemos la lista de productos
             List<Producto> listaProductos = await _productoRepo.ObtenerTodosAsync();
 
-
-            if (listaProductos == null || listaProductos.Count == 0)
+            if (listaProductos.Count == 0)
             {
                 throw new NotFoundException("No se encontraron productos");
             }
 
-            //Mapeamos la lista
-            List<ProductoResponseDTO> response = _mapper.Map<List<ProductoResponseDTO>>(listaProductos);
-
-            //Retornamos el response
-            return response;
+            return new Response<List<ProductoResponseDTO>>
+            {
+                Data = _mapper.Map<List<ProductoResponseDTO>>(listaProductos),
+                Message = "Producto obtenido exitosamente",
+                Success = true
+            };
 
         }
     }

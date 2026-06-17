@@ -25,6 +25,9 @@ namespace inaApp.Entities
 
         public bool Estado { get; set; } = true;
 
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+
         public ICollection<Producto> Productos { get; set; } = new List<Producto>();
+
     }
 }

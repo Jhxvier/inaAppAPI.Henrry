@@ -45,6 +45,7 @@ namespace inaApp.Entities
         [StringLength(500, ErrorMessage = "La descripción del producto no puede tener más de 500 caracteres")]
         public string descripcion { get; set; }
         public bool estado { get; set; } = true;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
     }
 }

@@ -17,18 +17,19 @@ namespace inaApp.DTOs.Producto
         [StringLength(100, MinimumLength = 3, ErrorMessage = "El nombre del producto debe tener entre 3 y 100 caracteres")]
         public string Nombre { get; set; }
 
+        [StringLength(500, ErrorMessage = "La descripción del producto no puede tener más de 500 caracteres")]
+        public string? Descripcion { get; set; }
+
         [Required(ErrorMessage = "El precio del producto es obligatorio")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio del producto debe ser mayor a 0")]
         public decimal Precio { get; set; }
 
         [Required(ErrorMessage = "El stock del producto es obligatorio")]
-        [Range(1, int.MaxValue, ErrorMessage = "El stock del producto no puede ser negativo")]
+        [Range(1, int.MaxValue, ErrorMessage = "El stock debe ser mayor a 0")]
         public int Stock { get; set; }
 
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
-        public int CategoriaId { get; set; }
+        public int CategoriaProductoId { get; set; }
 
-        [StringLength(500, ErrorMessage = "La descripción del producto no puede tener más de 500 caracteres")]
-        public string descripcion { get; set; } 
     }
 }

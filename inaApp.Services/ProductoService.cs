@@ -16,35 +16,51 @@ namespace inaApp.Services
     {
         private readonly IGenericRepository<Producto> _productoRepo;
         private readonly IMapper _mapper;
+        private readonly IGenericRepository<Categoria> _categoriaRepo;
 
-        public ProductoService(IGenericRepository<Producto> productoRepo, IMapper mapper)
+        public ProductoService(IGenericRepository<Producto> productoRepo, IGenericRepository<Categoria> categoriaRepo, IMapper mapper)
         {
             _productoRepo = productoRepo;
             _mapper = mapper;
+            _categoriaRepo = categoriaRepo;
         }
 
         public async Task<Response<ProductoResponseDTO>> ActualizarAsync(ProductoUpdateDTO entity)
         {
             //reglas de negocio
+            var productoExistente = await _productoRepo.ObtenerPorIdAsync(entity.Id);
+            if (productoExistente == null)
+            {
+                throw new NotFoundException($"El Producto con el id {entity.Id} no existe");
+            }
 
-            //precio ser mayor a 0
+            if (string.IsNullOrWhiteSpace(entity.Nombre))
+            {
+                throw new ArgumentException("El nombre del producto es obligatorio");
+            }
+
             if (entity.Precio <= 0)
             {
                 throw new InvalidPriceException("El precio debe ser mayor a 0");
             }
 
-            //nombre no repetido
+            if (entity.Stock <= 0)
+            {
+                throw new InvalidStockException("El stock debe ser mayor a 0");
+            }
+
             var productos = await _productoRepo.ObtenerTodosAsync();
             if (productos.Any(p => p.Nombre.ToLower() == entity.Nombre.ToLower() && p.Id != entity.Id))
             {
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
 
-            //stock no negativo o 0
-            if (entity.Stock < 0)
+            var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
+            if (categoria == null)
             {
-                throw new InvalidStockException("El stock no puede ser negativo");
+                throw new NotFoundException($"La categoría con el id {entity.CategoriaProductoId} no existe");
             }
+
 
             //convertir el DTO a entidad y guardarlo en la base de datos
 
@@ -66,27 +82,40 @@ namespace inaApp.Services
         {
             //reglas de negocio
 
-            //precio ser mayor a 0
+            if (string.IsNullOrWhiteSpace(entity.Nombre))
+            {
+                throw new ArgumentException("El nombre del producto es obligatorio");
+            }
+
             if (entity.Precio <= 0)
             {
                 throw new InvalidPriceException("El precio debe ser mayor a 0");
+            }
+
+            if (entity.Stock <= 0)
+            {
+                throw new InvalidStockException("El stock debe ser mayor a 0");
             }
 
             //nombre no repetido
             var productos = await _productoRepo.ObtenerTodosAsync();
             if (productos.Any(p => p.Nombre.ToLower() == entity.Nombre.ToLower()))
             {
-                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
+                throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
 
-            //stock no negativo o 0
-            if (entity.Stock < 0)
+            var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
+            if (categoria == null)
             {
-                throw new InvalidStockException("El stock no puede ser negativo");
+                throw new NotFoundException($"La categoría con el id {entity.CategoriaProductoId} no existe");
             }
 
+            if (!categoria.Estado)
+            {
+                throw new InvalidOperationException("No se puede crear un producto asociado a una categoría inactiva");
+            }
             //convertir el DTO a entidad y guardarlo en la base de datos
-            Producto producto = _mapper.Map<Producto>(entity);
+            var producto = _mapper.Map<Producto>(entity);
 
             //guardar en la base de datos
             producto = await _productoRepo.CrearAsync(producto);

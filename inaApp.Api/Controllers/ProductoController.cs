@@ -114,6 +114,8 @@ namespace inaApp.Api.Controllers
                     return BadRequest(ModelState);
                 }
 
+                productoDTO.Id = id;
+
                 var response = await _productoService.ActualizarAsync(productoDTO);
 
                 return Ok(response);

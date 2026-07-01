@@ -23,6 +23,6 @@ namespace InaApp.ProyectoINAApp.Models.Producto
         public int Stock { get; set; }
 
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
-        public int CategoriaProductoId { get; set; }
+        public int CategoriaProductoId { get; set; } = 1;
     }
 }

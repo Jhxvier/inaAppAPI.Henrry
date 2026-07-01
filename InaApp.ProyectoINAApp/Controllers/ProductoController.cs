@@ -43,26 +43,42 @@ namespace InaApp.ProyectoINAApp.Controllers
                 //viewbag: pasar datos simples, string, int, bool, etc
                 //viewdata: pasar datos simples, string, int, bool, etc
                 ViewBag.Mensaje = "No se encontraron productos.";
-                return View();
+                return View(new List<ProductoIndexViewModel>());
             }
             catch (Exception ex) {
                 ViewBag.Mensaje = "Ocurrió un error al obtener los productos.";
-                return View();
+                return View(new List<ProductoIndexViewModel>());
             }
         }
 
         // GET: ProductoController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> DetailsAsync(int id)
         {
-            return View();
+            try
+            {
+                var response = await _productoService.ObtenerPorIdAsync(id);
+                var productoVM = _mapper.Map<ProductoIndexViewModel>(response.Data);
+
+                return View(productoVM);
+            }
+            catch (Exception ex)
+            {
+                TempData["Mensaje"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+
         }
 
         // GET: ProductoController/Create
         [HttpGet]
         public ActionResult Create()
         {
-            var productoVM = new ProductoCreateViewModel();
+            var productoVM = new ProductoCreateViewModel
+            {
+                CategoriaProductoId = 1
+            };
             return View(productoVM);
+
         }
 
         // POST: ProductoController/Create
@@ -76,6 +92,8 @@ namespace InaApp.ProyectoINAApp.Controllers
                 {
                     return View(productoVM);
                 }
+
+                productoVM.CategoriaProductoId = 1;
 
                 //mapear el viewmodel a un dto para enviarlo al servicio
                 var productoDTO = _mapper.Map<ProductoCreateDTO>(productoVM);
@@ -101,22 +119,28 @@ namespace InaApp.ProyectoINAApp.Controllers
         }
 
         // GET: ProductoController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<ActionResult> EditAsync(int id)
         {
-            var response = await _productoService.ObtenerPorIdAsync(id);
-            if(!response.Success) {
-                TempData["Mensaje"] = response.Message;
+            try
+            {
+                var response = await _productoService.ObtenerPorIdAsync(id);
+                var productoVM = _mapper.Map<ProductoEditViewModel>(response.Data);
+
+                return View(productoVM);
+            }
+            catch (Exception ex)
+            {
+                TempData["Mensaje"] = ex.Message;
                 return RedirectToAction(nameof(Index));
             }
-            var productoVM = _mapper.Map<ProductoEditViewModel>(response.Data);
 
-            return View(productoVM);
         }
 
         // POST: ProductoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(ProductoEditViewModel productoEditVM)
+        public async Task<ActionResult> Edit(ProductoEditViewModel productoEditVM)
         {
             try
             {
@@ -124,6 +148,8 @@ namespace InaApp.ProyectoINAApp.Controllers
                 {
                     return View(productoEditVM);
                 }
+
+                productoEditVM.CategoriaProductoId = 1;
 
                 //mapear el viewmodel a un dto para enviarlo al servicio
                 var productoDTO = _mapper.Map<ProductoUpdateDTO>(productoEditVM);

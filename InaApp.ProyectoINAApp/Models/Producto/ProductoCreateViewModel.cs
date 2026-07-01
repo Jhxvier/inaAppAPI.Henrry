@@ -19,7 +19,7 @@ namespace InaApp.ProyectoINAApp.Models.Producto
         [Display(Name = "Stock del Producto")]
         [Required(ErrorMessage = "El stock del producto es obligatorio.")]
         public int Stock { get; set; } = 0;
-        public int CategoriaProductoId { get; set; }
+        public int CategoriaProductoId { get; set; } = 1;
         public string CategoriaProductoNombre { get; set; } = string.Empty;
     }
 }

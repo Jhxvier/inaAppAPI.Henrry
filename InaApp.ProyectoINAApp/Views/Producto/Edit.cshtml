@@ -31,11 +31,7 @@
             <input asp-for="Stock" class="form-control" />
             <span asp-validation-for="Stock" class="text-danger"></span>
         </div>
-        <div class="mb-3">
-            <label asp-for="CategoriaProductoId" class="form-label"></label>
-            <input asp-for="CategoriaProductoId" class="form-control" />
-            <span asp-validation-for="CategoriaProductoId" class="text-danger"></span>
-        </div>
+        <input asp-for="CategoriaProductoId" type="hidden" value="1" />
         <button type="submit" class="btn btn-success">
             Guardar cambios
         </button>

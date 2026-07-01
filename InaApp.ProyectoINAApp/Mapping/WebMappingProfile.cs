@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using inaApp.DTOs.Producto;
-using InaApp.ProyectoINAApp.Models;
+using InaApp.ProyectoINAApp.Models.Producto;
 
 namespace InaApp.ProyectoINAApp.Mapping
 {
@@ -10,9 +10,12 @@ namespace InaApp.ProyectoINAApp.Mapping
         {
             //DTO A VIEWMODEL
             CreateMap<ProductoResponseDTO, ProductoIndexViewModel>();
+            CreateMap<ProductoResponseDTO, ProductoEditViewModel>();
 
             //VIEWMODEL A DTO
             CreateMap<ProductoIndexViewModel, ProductoResponseDTO>();
+            CreateMap<ProductoCreateViewModel, ProductoCreateDTO>();
+            CreateMap<ProductoEditViewModel, ProductoUpdateDTO>();
         }
     }
 }

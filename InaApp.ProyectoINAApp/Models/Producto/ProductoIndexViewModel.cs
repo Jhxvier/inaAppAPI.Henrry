@@ -1,4 +1,4 @@
-﻿namespace InaApp.ProyectoINAApp.Models
+﻿namespace InaApp.ProyectoINAApp.Models.Producto
 {
     public class ProductoIndexViewModel
     {

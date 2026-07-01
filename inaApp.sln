@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inaApp.Data", "inaApp.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "inaApp.DTOs", "inaApp.DTOs\inaApp.DTOs.csproj", "{E94A6F95-B7C1-46F5-B843-BEEEAD42733B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InaApp.ProyectoINAApp", "InaApp.ProyectoINAApp\InaApp.ProyectoINAApp.csproj", "{D5232407-92D5-4647-B75A-ECC334DE4CE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{E94A6F95-B7C1-46F5-B843-BEEEAD42733B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E94A6F95-B7C1-46F5-B843-BEEEAD42733B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E94A6F95-B7C1-46F5-B843-BEEEAD42733B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5232407-92D5-4647-B75A-ECC334DE4CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5232407-92D5-4647-B75A-ECC334DE4CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5232407-92D5-4647-B75A-ECC334DE4CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5232407-92D5-4647-B75A-ECC334DE4CE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

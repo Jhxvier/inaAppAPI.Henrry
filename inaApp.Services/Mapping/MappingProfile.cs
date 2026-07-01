@@ -41,7 +41,6 @@ namespace inaApp.Services.Mapping
             CreateMap<Categoria, CategoriaProductoResponseDTO>();
 
 
-
         }
 
     }

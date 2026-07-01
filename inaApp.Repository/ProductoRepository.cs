@@ -83,6 +83,7 @@ namespace inaApp.Repository
             try
             {
                 return await _dbContext.Producto
+                    .AsNoTracking() // no realizar seguimiento de cambios en la entidad para mejorar el rendimiento
                       .Include(x => x.Categoria)
                       .Where(x => x.Id == id && x.estado == true)
                       .SingleOrDefaultAsync(); // obtener el producto por id y estado activo (estado == true)

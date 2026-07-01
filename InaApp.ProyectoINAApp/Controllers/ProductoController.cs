@@ -112,9 +112,10 @@ namespace InaApp.ProyectoINAApp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(productoVM);
             }
         }
 
@@ -135,6 +136,7 @@ namespace InaApp.ProyectoINAApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+
         }
 
         // POST: ProductoController/Edit/5
@@ -148,8 +150,6 @@ namespace InaApp.ProyectoINAApp.Controllers
                 {
                     return View(productoEditVM);
                 }
-
-                productoEditVM.CategoriaProductoId = 1;
 
                 //mapear el viewmodel a un dto para enviarlo al servicio
                 var productoDTO = _mapper.Map<ProductoUpdateDTO>(productoEditVM);
@@ -168,10 +168,12 @@ namespace InaApp.ProyectoINAApp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(productoEditVM);
             }
+
         }
 
         // GET: ProductoController/Delete/5

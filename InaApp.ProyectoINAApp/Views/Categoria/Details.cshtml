@@ -1,0 +1,24 @@
+﻿@using InaApp.ProyectoINAApp.Models.Categoria
+@model CategoriaIndexViewModel
+
+@{
+    ViewData["Title"] = "Detalles de Categoría";
+}
+
+<div class="container mt-4">
+    <h2>Detalles de Categoría</h2>
+    <div class="card mt-3">
+        <div class="card-header bg-info text-white">Información de la categoría</div>
+        <div class="card-body">
+            <p><strong>Id:</strong> @Model.Id</p>
+            <p><strong>Nombre:</strong> @Model.Nombre</p>
+            <p><strong>Descripción:</strong> @Model.Descripcion</p>
+            <p><strong>Estado:</strong> @(Model.Estado ? "Activa" : "Inactiva")</p>
+            <p><strong>Fecha de creación:</strong> @Model.FechaCreacion.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Modificar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>

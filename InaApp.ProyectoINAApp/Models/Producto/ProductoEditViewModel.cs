@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace InaApp.ProyectoINAApp.Models.Producto
 {
@@ -22,7 +23,11 @@ namespace InaApp.ProyectoINAApp.Models.Producto
         [Range(1, int.MaxValue, ErrorMessage = "El stock debe ser mayor a 0")]
         public int Stock { get; set; }
 
+        [Display(Name = "Categoría")]
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
-        public int CategoriaProductoId { get; set; } = 1;
+        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar una categoría.")]
+        public int CategoriaProductoId { get; set; }
+        public List<SelectListItem> Categorias { get; set; } = new();
+
     }
 }

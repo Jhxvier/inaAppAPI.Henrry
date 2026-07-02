@@ -1,0 +1,24 @@
+﻿@using InaApp.ProyectoINAApp.Models.Categoria
+@model CategoriaIndexViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Categoría";
+}
+
+<div class="container mt-4">
+    <h2>Eliminar Categoría</h2>
+    <div class="alert alert-warning mt-3"><strong>Advertencia:</strong> ¿Está seguro que desea eliminar la siguiente categoría?</div>
+    <div class="card">
+        <div class="card-header bg-danger text-white">Confirmación de eliminación</div>
+        <div class="card-body">
+            <p><strong>Id:</strong> @Model.Id</p>
+            <p><strong>Nombre:</strong> @Model.Nombre</p>
+            <p><strong>Descripción:</strong> @Model.Descripcion</p>
+        </div>
+    </div>
+    <form asp-action="DeleteConfirmed" method="post" class="mt-3">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

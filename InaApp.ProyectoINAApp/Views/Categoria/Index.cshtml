@@ -1,0 +1,55 @@
+﻿@using InaApp.ProyectoINAApp.Models.Categoria
+@model List<CategoriaIndexViewModel>
+
+@{
+    ViewData["Title"] = "Categorías";
+}
+
+<div class="container mt-4">
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-info">@TempData["Mensaje"]</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Categorías</h2>
+        <a asp-action="Create" class="btn btn-primary">Crear Categoría</a>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Fecha de creación</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var categoria in Model)
+                {
+                    <tr>
+                        <td>@categoria.Id</td>
+                        <td>@categoria.Nombre</td>
+                        <td>@categoria.Descripcion</td>
+                        <td>@(categoria.Estado ? "Activa" : "Inactiva")</td>
+                        <td>@categoria.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@categoria.Id" class="btn btn-info btn-sm">Detalles</a>
+                            <a asp-action="Edit" asp-route-id="@categoria.Id" class="btn btn-warning btn-sm">Modificar</a>
+                            <a asp-action="Delete" asp-route-id="@categoria.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6" class="text-center">No existen categorías registradas.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

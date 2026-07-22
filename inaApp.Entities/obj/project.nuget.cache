@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "DrHUBpVj8VM=",
+  "dgSpecHash": "6sjB9v00J1o=",
   "success": true,
   "projectFilePath": "C:\\INA\\C# NET CORE\\inaApp\\inaApp.Entities\\inaApp.Entities.csproj",
   "expectedPackageFiles": [
@@ -16,9 +16,9 @@
     "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.options\\9.0.16\\microsoft.extensions.options.9.0.16.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.16\\microsoft.extensions.primitives.9.0.16.nupkg.sha512",
     "C:\\Users\\jleiba\\.nuget\\packages\\system.diagnostics.diagnosticsource\\9.0.16\\system.diagnostics.diagnosticsource.9.0.16.nupkg.sha512",
-    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.28\\microsoft.windowsdesktop.app.ref.8.0.28.nupkg.sha512",
-    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.28\\microsoft.netcore.app.ref.8.0.28.nupkg.sha512",
-    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.28\\microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512"
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.29\\microsoft.windowsdesktop.app.ref.8.0.29.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.29\\microsoft.netcore.app.ref.8.0.29.nupkg.sha512",
+    "C:\\Users\\jleiba\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.29\\microsoft.aspnetcore.app.ref.8.0.29.nupkg.sha512"
   ],
   "logs": []
 }

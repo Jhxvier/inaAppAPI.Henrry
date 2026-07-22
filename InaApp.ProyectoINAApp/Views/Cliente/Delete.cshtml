@@ -1,0 +1,26 @@
+﻿@using InaApp.ProyectoINAApp.Models.Cliente
+@model ClienteIndexViewModel
+
+@{
+    ViewData["Title"] = "Eliminar Cliente";
+}
+
+<div class="container mt-4">
+    <h2>Eliminar Cliente</h2>
+    <div class="alert alert-warning mt-3"><strong>Advertencia:</strong> ¿Está seguro que desea eliminar el siguiente cliente?</div>
+    <div class="card">
+        <div class="card-header bg-danger text-white">Confirmación de eliminación</div>
+        <div class="card-body">
+            <p><strong>Id:</strong> @Model.IdCliente</p>
+            <p><strong>Identificación:</strong> @Model.TipoIdentificacion: @Model.NumeroIdentificacion</p>
+            <p><strong>Nombre:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2</p>
+            <p><strong>Correo electrónico:</strong> @Model.CorreoElectronico</p>
+            <p><strong>Teléfono:</strong> @Model.Telefono</p>
+        </div>
+    </div>
+    <form asp-action="DeleteConfirmed" method="post" class="mt-3">
+        <input type="hidden" name="id" value="@Model.IdCliente" />
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

@@ -133,7 +133,7 @@ namespace InaApp.ProyectoINAApp.Controllers
 
         // GET: CategoriaController/Delete/5
         [HttpGet]
-        public async Task<ActionResult> DeleteAsync(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {

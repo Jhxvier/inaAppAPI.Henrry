@@ -1,0 +1,25 @@
+﻿@using InaApp.ProyectoINAApp.Models.Cliente
+@model ClienteIndexViewModel
+
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<div class="container mt-4">
+    <h2>Detalles del Cliente</h2>
+    <div class="card mt-3">
+        <div class="card-header bg-info text-white">Información del cliente</div>
+        <div class="card-body">
+            <p><strong>Id:</strong> @Model.IdCliente</p>
+            <p><strong>Tipo de identificación:</strong> @Model.TipoIdentificacion</p>
+            <p><strong>Número de identificación:</strong> @Model.NumeroIdentificacion</p>
+            <p><strong>Nombre:</strong> @Model.Nombre @Model.Apellido1 @Model.Apellido2</p>
+            <p><strong>Correo electrónico:</strong> @Model.CorreoElectronico</p>
+            <p><strong>Teléfono:</strong> @Model.Telefono</p>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.IdCliente" class="btn btn-warning">Modificar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>

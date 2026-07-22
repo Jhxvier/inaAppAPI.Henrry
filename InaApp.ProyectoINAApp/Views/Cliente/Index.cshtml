@@ -1,0 +1,59 @@
+﻿@using InaApp.ProyectoINAApp.Models.Cliente
+@model List<ClienteIndexViewModel>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="container mt-4">
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-info">@TempData["Mensaje"]</div>
+    }
+    @if (ViewBag.Mensaje != null)
+    {
+        <div class="alert alert-info">@ViewBag.Mensaje</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Clientes</h2>
+        <a asp-action="Create" class="btn btn-primary">Crear Cliente</a>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Identificación</th>
+                <th>Nombre completo</th>
+                <th>Correo electrónico</th>
+                <th>Teléfono</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var cliente in Model)
+                {
+                    <tr>
+                        <td>@cliente.IdCliente</td>
+                        <td>@cliente.TipoIdentificacion: @cliente.NumeroIdentificacion</td>
+                        <td>@cliente.Nombre @cliente.Apellido1 @cliente.Apellido2</td>
+                        <td>@cliente.CorreoElectronico</td>
+                        <td>@cliente.Telefono</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@cliente.IdCliente" class="btn btn-info btn-sm">Detalles</a>
+                            <a asp-action="Edit" asp-route-id="@cliente.IdCliente" class="btn btn-warning btn-sm">Modificar</a>
+                            <a asp-action="Delete" asp-route-id="@cliente.IdCliente" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6" class="text-center">No existen clientes registrados.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

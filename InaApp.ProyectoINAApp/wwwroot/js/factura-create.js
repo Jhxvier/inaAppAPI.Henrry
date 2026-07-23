@@ -1,14 +1,34 @@
 ﻿(() => {
     "use strict";
 
-    const porcentajeImpuesto = 0.13;
+    const escalaMonetaria = 10000n;
+    const porcentajeImpuesto = 1300n;
     const detallesIniciales = document.getElementById("factura-detalles-iniciales");
     const cuerpoDetalles = document.getElementById("detalles");
     const descuentoInput = document.getElementById("Descuento");
     let detalles = detallesIniciales ? JSON.parse(detallesIniciales.textContent) : [];
 
+    function decimalAEntero(valor) {
+        if (typeof valor === "bigint") {
+            return valor;
+        }
+
+        const texto = String(valor ?? "0").trim().replace(",", ".");
+        const esNegativo = texto.startsWith("-");
+        const sinSigno = texto.replace(/^[+-]/, "");
+        const [entero = "0", fraccion = ""] = sinSigno.split(".");
+        const fraccionNormalizada = `${fraccion}0000`.slice(0, 4);
+        const resultado = BigInt(entero || "0") * escalaMonetaria + BigInt(fraccionNormalizada);
+        return esNegativo ? -resultado : resultado;
+    }
+
     function formatoMoneda(valor) {
-        return Number(valor).toFixed(2);
+        const esNegativo = valor < 0n;
+        const absoluto = esNegativo ? -valor : valor;
+        const centavosRedondeados = (absoluto + 50n) / 100n;
+        const entero = centavosRedondeados / 100n;
+        const fraccion = (centavosRedondeados % 100n).toString().padStart(2, "0");
+        return `${esNegativo ? "-" : ""}${entero}.${fraccion}`;
     }
 
     function escaparHtml(valor) {
@@ -18,8 +38,9 @@
     }
 
     function calcularLinea(detalle) {
-        detalle.subtotal = detalle.cantidad * detalle.precioUnitario;
-        detalle.impuesto = detalle.subtotal * porcentajeImpuesto;
+        detalle.precioUnitario = decimalAEntero(detalle.precioUnitario);
+        detalle.subtotal = BigInt(detalle.cantidad) * detalle.precioUnitario;
+        detalle.impuesto = detalle.subtotal * porcentajeImpuesto / escalaMonetaria;
         detalle.totalLinea = detalle.subtotal + detalle.impuesto;
     }
 
@@ -31,7 +52,7 @@
                     <input type="hidden" name="Detalles[${indice}].ProductoId" value="${detalle.productoId}" />
                     <input type="hidden" name="Detalles[${indice}].Producto" value="${escaparHtml(detalle.producto)}" />
                     <input type="hidden" name="Detalles[${indice}].Cantidad" value="${detalle.cantidad}" />
-                    <input type="hidden" name="Detalles[${indice}].PrecioUnitario" value="${detalle.precioUnitario}" />
+                    <input type="hidden" name="Detalles[${indice}].PrecioUnitario" value="${formatoDecimal(detalle.precioUnitario)}" />
                 </td>
                 <td>${detalle.cantidad}</td>
                 <td>₡${formatoMoneda(detalle.precioUnitario)}</td>
@@ -43,13 +64,21 @@
                 </td>
             </tr>`).join("");
 
-        const subtotal = detalles.reduce((total, detalle) => total + detalle.subtotal, 0);
-        const impuesto = detalles.reduce((total, detalle) => total + detalle.impuesto, 0);
-        const descuento = Number(descuentoInput.value) || 0;
+        const subtotal = detalles.reduce((total, detalle) => total + detalle.subtotal, 0n);
+        const impuesto = detalles.reduce((total, detalle) => total + detalle.impuesto, 0n);
+        const descuento = decimalAEntero(descuentoInput.value);
 
         document.getElementById("subtotal").textContent = formatoMoneda(subtotal);
         document.getElementById("impuesto").textContent = formatoMoneda(impuesto);
         document.getElementById("total").textContent = formatoMoneda(subtotal + impuesto - descuento);
+    }
+
+    function formatoDecimal(valor) {
+        const esNegativo = valor < 0n;
+        const absoluto = esNegativo ? -valor : valor;
+        const entero = absoluto / escalaMonetaria;
+        const fraccion = (absoluto % escalaMonetaria).toString().padStart(4, "0");
+        return `${esNegativo ? "-" : ""}${entero}.${fraccion}`;
     }
 
     document.getElementById("agregar").addEventListener("click", () => {
@@ -73,7 +102,7 @@
             productoId: Number(productoSeleccionado.value),
             producto: productoSeleccionado.dataset.nombre,
             cantidad,
-            precioUnitario: Number(productoSeleccionado.dataset.precio)
+            precioUnitario: decimalAEntero(productoSeleccionado.dataset.precio)
         };
 
         calcularLinea(detalle);

@@ -7,6 +7,7 @@ using inaApp.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +83,7 @@ namespace inaApp.Services
                 throw new InvalidOperationException("No se debe agregar dos veces el mismo producto.");
             }
 
+            // Los bloqueos de actualización impiden que dos ventas simultáneas descuenten el mismo stock. La transacción conserva los bloqueos hasta confirmar o revertir.
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
@@ -146,7 +148,7 @@ namespace inaApp.Services
                 factura.Impuesto = impuesto;
                 factura.Total = total;
                 factura.Estado = true;
-                // Se usa un valor temporal único para obtener el Id generado por la base de datos.
+                // Se usa un valor temporal único mientras la base de datos genera el Id.
                 factura.NumeroFactura = $"TMP-{Guid.NewGuid():N}"[..30];
 
                 await _facturaRepository.CrearAsync(factura);

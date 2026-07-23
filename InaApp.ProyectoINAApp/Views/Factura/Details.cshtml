@@ -8,6 +8,11 @@
 <div class="container mt-4">
     <h2>Detalles de la Factura</h2>
 
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+
     <div class="card mt-3">
         <div class="card-header bg-info text-white">Información general</div>
         <div class="card-body">

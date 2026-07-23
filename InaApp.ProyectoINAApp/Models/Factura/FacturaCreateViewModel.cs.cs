@@ -16,6 +16,8 @@ namespace InaApp.ProyectoINAApp.Models.Factura
 
         public List<SelectListItem> Clientes { get; set; } = new();
         public List<SelectListItem> Productos { get; set; } = new();
+        public int ProductoSeleccionadoId { get; set; }
+        public int Cantidad { get; set; }
         public List<ProductoDisponibleViewModel> ProductosDisponibles { get; set; } = new();
         public List<FacturaDetalleViewModel> Detalles { get; set; } = new();
         public decimal Subtotal { get; set; }

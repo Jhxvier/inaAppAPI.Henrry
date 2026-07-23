@@ -6,14 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace inaApp.Api.Controllers
 {
     [ApiController]
-    [Route("api/Factura")]
+    [Route("api/facturas")]
     public class FacturaController : Controller
     {
         private readonly IFacturaService<
             FacturaResponseDTO,
             FacturaListDTO,
             FacturaCreateDTO> _facturaService;
-        private const decimal PorcentajeImpuesto = 0.13m;
 
         public FacturaController(IFacturaService<
                 FacturaResponseDTO,
@@ -66,7 +65,6 @@ namespace inaApp.Api.Controllers
 
         // POST: FacturaController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([FromBody] FacturaCreateDTO facturaDTO)
         {
             try
@@ -80,18 +78,6 @@ namespace inaApp.Api.Controllers
                 {
                     return BadRequest("Debe agregar al menos un producto.");
                 }
-
-                // Los cálculos se realizan en el Controller, según la indicación del ejercicio.
-                foreach (var detalle in facturaDTO.Detalles)
-                {
-                    detalle.Subtotal = detalle.Cantidad * detalle.PrecioUnitario;
-                    detalle.Impuesto = detalle.Subtotal * PorcentajeImpuesto;
-                    detalle.TotalLinea = detalle.Subtotal + detalle.Impuesto;
-                }
-
-                facturaDTO.Subtotal = facturaDTO.Detalles.Sum(detalle => detalle.Subtotal);
-                facturaDTO.Impuesto = facturaDTO.Detalles.Sum(detalle => detalle.Impuesto);
-                facturaDTO.Total = facturaDTO.Subtotal + facturaDTO.Impuesto - facturaDTO.Descuento;
 
                 var response = await _facturaService.CrearAsync(facturaDTO);
                 return Created("Factura creada", response);

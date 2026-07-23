@@ -18,6 +18,7 @@ namespace inaApp.Services
         FacturaListDTO,
         FacturaCreateDTO>
     {
+        private const decimal PorcentajeImpuesto = 0.13m;
         private readonly ApplicationDbContext _context;
         private readonly IFacturaRepository<Factura> _facturaRepository;
         private readonly IMapper _mapper;
@@ -66,14 +67,14 @@ namespace inaApp.Services
                 throw new InvalidOperationException("El cliente seleccionado no existe o está inactivo.");
             }
 
-            if (dto.Detalles.Count == 0)
+            if (dto.Detalles == null || dto.Detalles.Count == 0)
             {
                 throw new InvalidOperationException("Debe agregar al menos un producto.");
             }
 
-            if (dto.Descuento < 0 || dto.Descuento > dto.Subtotal || dto.Total <= 0)
+            if (dto.Descuento < 0)
             {
-                throw new InvalidOperationException("Los totales de la factura no son válidos.");
+                throw new InvalidOperationException("El descuento no puede ser negativo.");
             }
 
             if (dto.Detalles.Select(d => d.ProductoId).Distinct().Count() != dto.Detalles.Count)
@@ -85,6 +86,7 @@ namespace inaApp.Services
 
             try
             {
+                var detallesFactura = new List<FacturaDetalle>();
                 foreach (var detalle in dto.Detalles)
                 {
                     var producto = await _context.Producto
@@ -95,9 +97,14 @@ namespace inaApp.Services
                         throw new InvalidOperationException("El producto seleccionado no existe o está inactivo.");
                     }
 
-                    if (detalle.Cantidad <= 0 || detalle.PrecioUnitario <= 0)
+                    if (detalle.Cantidad <= 0)
                     {
-                        throw new InvalidOperationException("La cantidad y el precio deben ser mayores que cero.");
+                        throw new InvalidOperationException("La cantidad debe ser mayor que cero.");
+                    }
+
+                    if (producto.Precio <= 0)
+                    {
+                        throw new InvalidOperationException($"El producto {producto.Nombre} no tiene un precio válido.");
                     }
 
                     if (producto.Stock < detalle.Cantidad)
@@ -106,9 +113,38 @@ namespace inaApp.Services
                     }
 
                     producto.Stock -= detalle.Cantidad;
+                    var subtotalLinea = detalle.Cantidad * producto.Precio;
+                    var impuestoLinea = subtotalLinea * PorcentajeImpuesto;
+                    detallesFactura.Add(new FacturaDetalle
+                    {
+                        ProductoId = producto.Id,
+                        Cantidad = detalle.Cantidad,
+                        PrecioUnitario = producto.Precio,
+                        Subtotal = subtotalLinea,
+                        Impuesto = impuestoLinea,
+                        TotalLinea = subtotalLinea + impuestoLinea
+                    });
+                }
+
+                var subtotal = detallesFactura.Sum(d => d.Subtotal);
+                var impuesto = detallesFactura.Sum(d => d.Impuesto);
+
+                if (dto.Descuento > subtotal)
+                {
+                    throw new InvalidOperationException("El descuento no puede superar el subtotal.");
+                }
+
+                var total = subtotal + impuesto - dto.Descuento;
+                if (total <= 0)
+                {
+                    throw new InvalidOperationException("El total de la factura debe ser mayor que cero.");
                 }
 
                 var factura = _mapper.Map<Factura>(dto);
+                factura.Detalles = detallesFactura;
+                factura.Subtotal = subtotal;
+                factura.Impuesto = impuesto;
+                factura.Total = total;
                 factura.Estado = true;
                 // Se usa un valor temporal único para obtener el Id generado por la base de datos.
                 factura.NumeroFactura = $"TMP-{Guid.NewGuid():N}"[..30];

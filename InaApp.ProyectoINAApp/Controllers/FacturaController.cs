@@ -11,8 +11,6 @@ namespace InaApp.ProyectoINAApp.Controllers
 {
     public class FacturaController : Controller
     {
-        private const decimal PorcentajeImpuesto = 0.13m;
-
         private readonly IFacturaService<
             FacturaResponseDTO,
             FacturaListDTO,
@@ -108,8 +106,6 @@ namespace InaApp.ProyectoINAApp.Controllers
 
             try
             {
-                CalcularTotales(facturaVM);
-
                 var facturaDTO = _mapper.Map<FacturaCreateDTO>(facturaVM);
                 var response = await _facturaService.CrearAsync(facturaDTO);
 
@@ -231,20 +227,6 @@ namespace InaApp.ProyectoINAApp.Controllers
                 }).ToList();
 
             return facturaVM;
-        }
-
-        private static void CalcularTotales(FacturaCreateViewModel facturaVM)
-        {
-            foreach (var detalle in facturaVM.Detalles)
-            {
-                detalle.Subtotal = detalle.Cantidad * detalle.PrecioUnitario;
-                detalle.Impuesto = detalle.Subtotal * PorcentajeImpuesto;
-                detalle.TotalLinea = detalle.Subtotal + detalle.Impuesto;
-            }
-
-            facturaVM.Subtotal = facturaVM.Detalles.Sum(detalle => detalle.Subtotal);
-            facturaVM.Impuesto = facturaVM.Detalles.Sum(detalle => detalle.Impuesto);
-            facturaVM.Total = facturaVM.Subtotal + facturaVM.Impuesto - facturaVM.Descuento;
         }
     }
 }

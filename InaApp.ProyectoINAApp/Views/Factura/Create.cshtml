@@ -41,7 +41,7 @@
                 <div class="row align-items-end">
                     <div class="col-md-6 mb-3">
                         <label for="producto" class="form-label">Producto</label>
-                        <select id="producto" class="form-select">
+                        <select asp-for="ProductoSeleccionadoId" id="producto" class="form-select">
                             <option value="">Seleccione un producto</option>
                             @foreach (var producto in Model.ProductosDisponibles)
                             {
@@ -56,7 +56,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="cantidad" class="form-label">Cantidad</label>
-                        <input id="cantidad" type="number" min="1" class="form-control" />
+                        <input asp-for="Cantidad" id="cantidad" type="number" min="1" class="form-control" />
                     </div>
                     <div class="col-md-3 mb-3">
                         <button type="button" id="agregar" class="btn btn-primary">Agregar producto</button>

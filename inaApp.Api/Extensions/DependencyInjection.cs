@@ -37,6 +37,7 @@ namespace inaApp.Api.Extensions
             services.AddScoped<IGenericServices<ClienteResponseDTO, ClienteCreateDTO, ClienteUpdateDTO>, ClienteService>();
             services.AddScoped<IGenericServices<CategoriaProductoResponseDTO, CategoriaProductoCreateDTO, CategoriaProductoUpdateDTO>, CategoriaService>();
             services.AddScoped<IFacturaRepository<Factura>, FacturaRepository>();
+            services.AddScoped<IGenericRepository<FacturaDetalle>, FacturaDetalleRepository>();
 
             //inyecciones de dependencia de repositorios
             services.AddScoped<IGenericRepository<Producto>, ProductoRepository>();

@@ -23,7 +23,6 @@ namespace inaApp.Repository
         {
             return await _dbContext.Factura
                 .AsNoTracking()
-                .Where(factura => factura.Estado)
                 .Include(factura => factura.Cliente)
                 .Include(factura => factura.Detalles)
                 .ThenInclude(detalle => detalle.Producto)
@@ -34,7 +33,6 @@ namespace inaApp.Repository
         public async Task<Factura> ObtenerPorIdAsync(int id)
         {
             return (await _dbContext.Factura
-                .Where(factura => factura.Estado)
                 .Include(factura => factura.Cliente)
                 .Include(factura => factura.Detalles)
                 .ThenInclude(detalle => detalle.Producto)

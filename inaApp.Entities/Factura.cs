@@ -31,8 +31,6 @@ namespace inaApp.Entities
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; }
-
-        [Required, MaxLength(20)]
         public bool Estado { get; set; } = true;
 
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;

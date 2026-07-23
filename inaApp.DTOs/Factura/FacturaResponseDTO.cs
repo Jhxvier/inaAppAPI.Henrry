@@ -17,7 +17,7 @@ namespace inaApp.DTOs.Factura
         public decimal Impuesto { get; set; }
         public decimal Descuento { get; set; }
         public decimal Total { get; set; }
-        public string Estado { get; set; } = string.Empty;
+        public bool Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public List<FacturaDetalleResponseDTO> Detalles { get; set; } = new();
     }

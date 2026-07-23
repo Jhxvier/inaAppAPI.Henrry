@@ -20,27 +20,27 @@ C:\INA\C#VS\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.pdb
 C:\INA\C#VS\inaApp\inaApp.Services\obj\Debug\net8.0\ref\inaApp.Services.dll
 C:\INA\C#VS\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.dll
 C:\INA\C#VS\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.deps.json
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Common.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Entities.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Repository.dll
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Common.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Entities.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Repository.pdb
+C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.pdb
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.csproj.AssemblyReference.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.GeneratedMSBuildEditorConfig.editorconfig
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.AssemblyInfoInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.AssemblyInfo.cs
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.csproj.CoreCompileInputs.cache
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.sourcelink.json
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.deps.json
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Services.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Common.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Entities.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Repository.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Common.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Entities.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Repository.pdb
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.Data.pdb
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.S.453D7C7C.Up2Date
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\refint\inaApp.Services.dll
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\inaApp.Services.pdb
 C:\INA\C# NET CORE\inaApp\inaApp.Services\obj\Debug\net8.0\ref\inaApp.Services.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.dll
-C:\INA\C# NET CORE\inaApp\inaApp.Services\bin\Debug\net8.0\inaApp.DTOs.pdb

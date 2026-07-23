@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using inaApp.DTOs.CategoriaProducto;
 using inaApp.DTOs.Cliente;
+using inaApp.DTOs.Factura;
 using inaApp.DTOs.Producto;
 using inaApp.Entities;
 using System;
@@ -39,8 +40,14 @@ namespace inaApp.Services.Mapping
                 .ForMember(destino => destino.CategoriaProductoNombre, opcion => opcion.MapFrom(origen => origen.Categoria.Nombre));
             CreateMap<Cliente, ClienteResponseDTO>();
             CreateMap<Categoria, CategoriaProductoResponseDTO>();
-
-
+            CreateMap<FacturaCreateDTO, Factura>();
+            CreateMap<FacturaDetalleCreateDTO, FacturaDetalle>();
+            CreateMap<Factura, FacturaListDTO>()
+                .ForMember(d => d.Cliente, o => o.MapFrom(s => s.Cliente.Nombre + " " + s.Cliente.Apellido1));
+            CreateMap<Factura, FacturaResponseDTO>()
+                .ForMember(d => d.Cliente, o => o.MapFrom(s => s.Cliente.Nombre + " " + s.Cliente.Apellido1));
+            CreateMap<FacturaDetalle, FacturaDetalleResponseDTO>()
+                .ForMember(d => d.Producto, o => o.MapFrom(s => s.Producto.Nombre));
         }
 
     }

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using inaApp.DTOs.CategoriaProducto;
 using inaApp.DTOs.Cliente;
+using inaApp.DTOs.Factura;
 using inaApp.DTOs.Producto;
 using InaApp.ProyectoINAApp.Models.Categoria;
 using InaApp.ProyectoINAApp.Models.Cliente;
+using InaApp.ProyectoINAApp.Models.Factura;
 using InaApp.ProyectoINAApp.Models.Producto;
 
 namespace InaApp.ProyectoINAApp.Mapping
@@ -28,8 +30,11 @@ namespace InaApp.ProyectoINAApp.Mapping
             CreateMap<CategoriaEditViewModel, CategoriaProductoUpdateDTO>();
             CreateMap<ClienteCreateViewModel, ClienteCreateDTO>();
             CreateMap<ClienteEditViewModel, ClienteUpdateDTO>();
-
-
+            CreateMap<FacturaCreateViewModel, FacturaCreateDTO>();
+            CreateMap<FacturaDetalleViewModel, FacturaDetalleCreateDTO>();
+            CreateMap<FacturaListDTO, FacturaIndexViewModel>();
+            CreateMap<FacturaResponseDTO, FacturaDetailsViewModel>();
+            CreateMap<FacturaDetalleResponseDTO, FacturaDetalleViewModel>();
         }
     }
 }

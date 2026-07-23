@@ -3,6 +3,7 @@ using inaApp.Data;
 using inaApp.DTOs.CategoriaProducto;
 using inaApp.DTOs.Cliente;
 using inaApp.DTOs.Producto;
+using inaApp.DTOs.Factura;
 using inaApp.Entities;
 using inaApp.Repository;
 using inaApp.Services;
@@ -25,13 +26,17 @@ namespace inaApp.Api.Extensions
 
             //profile auto mapper
             services.AddAutoMapper(cfg => { },typeof(MappingProfile));
+            services.AddScoped<IFacturaService<FacturaResponseDTO, FacturaListDTO, FacturaCreateDTO>,
+                FacturaService>();
+
+
 
 
             //inyecciones de dependencia de servicios
             services.AddScoped<IGenericServices<ProductoResponseDTO, ProductoCreateDTO, ProductoUpdateDTO>, ProductoService>();
             services.AddScoped<IGenericServices<ClienteResponseDTO, ClienteCreateDTO, ClienteUpdateDTO>, ClienteService>();
             services.AddScoped<IGenericServices<CategoriaProductoResponseDTO, CategoriaProductoCreateDTO, CategoriaProductoUpdateDTO>, CategoriaService>();
-
+            services.AddScoped<IFacturaRepository<Factura>, FacturaRepository>();
 
             //inyecciones de dependencia de repositorios
             services.AddScoped<IGenericRepository<Producto>, ProductoRepository>();

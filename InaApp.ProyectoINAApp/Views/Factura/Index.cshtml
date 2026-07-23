@@ -1,0 +1,65 @@
+﻿@using InaApp.ProyectoINAApp.Models.Factura
+@model List<FacturaIndexViewModel>
+
+@{
+    ViewData["Title"] = "Facturas";
+}
+
+<div class="container mt-4">
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-info">@TempData["Mensaje"]</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Facturas</h2>
+        <a asp-action="Create" class="btn btn-primary">Crear Factura</a>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Subtotal</th>
+                <th>Impuesto</th>
+                <th>Descuento</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var factura in Model)
+                {
+                    <tr>
+                        <td>@factura.NumeroFactura</td>
+                        <td>@factura.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@factura.Cliente</td>
+                        <td>₡@factura.Subtotal.ToString("N2")</td>
+                        <td>₡@factura.Impuesto.ToString("N2")</td>
+                        <td>₡@factura.Descuento.ToString("N2")</td>
+                        <td>₡@factura.Total.ToString("N2")</td>
+                        <td>@(factura.Estado ? "Activa" : "Inactiva")</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@factura.Id" class="btn btn-info btn-sm">Detalles</a>
+                            @if (factura.Estado)
+                            {
+                                <a asp-action="Anular" asp-route-id="@factura.Id" class="btn btn-danger btn-sm">Anular</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center">No existen facturas registradas.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

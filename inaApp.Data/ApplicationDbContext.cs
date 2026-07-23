@@ -25,6 +25,14 @@ namespace inaApp.Data
                 .HasForeignKey(producto => producto.CategoriaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Factura>(entity =>
+            {
+                entity.HasIndex(f => f.NumeroFactura).IsUnique();
+                entity.HasOne(f => f.Cliente).WithMany(c => c.Facturas).HasForeignKey(f => f.ClienteId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(f => f.Detalles).WithOne(d => d.Factura).HasForeignKey(d => d.FacturaId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<FacturaDetalle>()
+                .HasOne(d => d.Producto).WithMany(p => p.FacturaDetalles).HasForeignKey(d => d.ProductoId).OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -32,6 +40,8 @@ namespace inaApp.Data
         public DbSet<Producto> Producto { get; set; }
         public DbSet<Categoria> Categoria { get; set; }
         public DbSet<Cliente> Cliente { get; set; }
+        public DbSet<Factura> Factura { get; set; }
+        public DbSet<FacturaDetalle> FacturaDetalle { get; set; }
 
     }
 }

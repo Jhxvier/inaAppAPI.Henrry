@@ -1,0 +1,31 @@
+﻿@using InaApp.ProyectoINAApp.Models.Factura
+@model FacturaDetailsViewModel
+
+@{
+    ViewData["Title"] = "Anular Factura";
+}
+
+<div class="container mt-4">
+    <h2>Anular Factura</h2>
+
+    <div class="alert alert-warning mt-3">
+        <strong>Advertencia:</strong> ¿Está seguro que desea anular esta factura? El stock de los productos será restaurado.
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-danger text-white">Confirmación de anulación</div>
+        <div class="card-body">
+            <p><strong>Número de factura:</strong> @Model.NumeroFactura</p>
+            <p><strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy")</p>
+            <p><strong>Cliente:</strong> @Model.Cliente</p>
+            <p><strong>Total:</strong> ₡@Model.Total.ToString("N2")</p>
+            <p><strong>Estado actual:</strong> @(Model.Estado ? "Activa" : "Inactiva")</p>
+        </div>
+    </div>
+
+    <form asp-action="Anular" method="post" class="mt-3">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Sí, anular</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

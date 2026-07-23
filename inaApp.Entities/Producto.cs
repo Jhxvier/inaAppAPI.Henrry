@@ -46,6 +46,6 @@ namespace inaApp.Entities
         public string descripcion { get; set; }
         public bool estado { get; set; } = true;
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
-
+        public ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
     }
 }

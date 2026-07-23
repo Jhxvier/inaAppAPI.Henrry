@@ -105,6 +105,91 @@ namespace inaApp.Data.Migrations
                     b.ToTable("tb_Cliente");
                 });
 
+            modelBuilder.Entity("inaApp.Entities.Factura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Descuento")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("Estado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Impuesto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NumeroFactura")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("NumeroFactura")
+                        .IsUnique();
+
+                    b.ToTable("tb_Factura");
+                });
+
+            modelBuilder.Entity("inaApp.Entities.FacturaDetalle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FacturaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Impuesto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalLinea")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacturaId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("tb_FacturaDetalle");
+                });
+
             modelBuilder.Entity("inaApp.Entities.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -145,6 +230,36 @@ namespace inaApp.Data.Migrations
                     b.ToTable("tb_Producto");
                 });
 
+            modelBuilder.Entity("inaApp.Entities.Factura", b =>
+                {
+                    b.HasOne("inaApp.Entities.Cliente", "Cliente")
+                        .WithMany("Facturas")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("inaApp.Entities.FacturaDetalle", b =>
+                {
+                    b.HasOne("inaApp.Entities.Factura", "Factura")
+                        .WithMany("Detalles")
+                        .HasForeignKey("FacturaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("inaApp.Entities.Producto", "Producto")
+                        .WithMany("FacturaDetalles")
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Factura");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("inaApp.Entities.Producto", b =>
                 {
                     b.HasOne("inaApp.Entities.Categoria", "Categoria")
@@ -159,6 +274,21 @@ namespace inaApp.Data.Migrations
             modelBuilder.Entity("inaApp.Entities.Categoria", b =>
                 {
                     b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("inaApp.Entities.Cliente", b =>
+                {
+                    b.Navigation("Facturas");
+                });
+
+            modelBuilder.Entity("inaApp.Entities.Factura", b =>
+                {
+                    b.Navigation("Detalles");
+                });
+
+            modelBuilder.Entity("inaApp.Entities.Producto", b =>
+                {
+                    b.Navigation("FacturaDetalles");
                 });
 #pragma warning restore 612, 618
         }

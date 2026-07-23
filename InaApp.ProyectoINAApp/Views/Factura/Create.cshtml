@@ -1,0 +1,112 @@
+﻿@using InaApp.ProyectoINAApp.Models.Factura
+@model FacturaCreateViewModel
+
+@{
+    ViewData["Title"] = "Crear Factura";
+}
+
+<div class="container mt-4">
+    <h2>Crear Factura</h2>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">Información de la factura</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="numeroFactura">Número de factura</label>
+                        <input id="numeroFactura" class="form-control" value="Se asignará automáticamente al guardar" readonly aria-describedby="numeroFacturaAyuda" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Fecha" class="form-label"></label>
+                        <input asp-for="Fecha" class="form-control" />
+                        <span asp-validation-for="Fecha" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="ClienteId" class="form-label">Cliente</label>
+                        <select asp-for="ClienteId" asp-items="Model.Clientes" class="form-select">
+                            <option value="">Seleccione un cliente</option>
+                        </select>
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">Agregar producto</div>
+            <div class="card-body">
+                <div class="row align-items-end">
+                    <div class="col-md-6 mb-3">
+                        <label for="producto" class="form-label">Producto</label>
+                        <select id="producto" class="form-select">
+                            <option value="">Seleccione un producto</option>
+                            @foreach (var producto in Model.ProductosDisponibles)
+                            {
+                                <option value="@producto.Id"
+                                        data-nombre="@producto.Nombre"
+                                        data-precio="@producto.Precio"
+                                        data-stock="@producto.Stock">
+                                    @producto.Nombre (Stock: @producto.Stock)
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input id="cantidad" type="number" min="1" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <button type="button" id="agregar" class="btn btn-primary">Agregar producto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Detalle de la factura</h4>
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio unitario</th>
+                    <th>Subtotal</th>
+                    <th>Impuesto</th>
+                    <th>Total de línea</th>
+                    <th class="text-center">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="detalles">
+            </tbody>
+        </table>
+
+        <div class="row justify-content-end">
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header">Resumen</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Descuento" class="form-label"></label>
+                            <input asp-for="Descuento" type="number" min="0" step="0.01" class="form-control" />
+                            <span asp-validation-for="Descuento" class="text-danger"></span>
+                        </div>
+                        <p><strong>Subtotal:</strong> ₡<span id="subtotal">0.00</span></p>
+                        <p><strong>Impuesto:</strong> ₡<span id="impuesto">0.00</span></p>
+                        <h4>Total: ₡<span id="total">0.00</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar factura</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script id="factura-detalles-iniciales" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Detalles, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }))</script>
+    <script src="~/js/factura-create.js" asp-append-version="true"></script>
+}

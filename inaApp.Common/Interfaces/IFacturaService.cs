@@ -11,6 +11,7 @@ namespace inaApp.Common.Interfaces
     {
         Task<Response<List<TList>>> ObtenerTodosAsync();
         Task<Response<TResponse>> ObtenerPorIdAsync(int id);
+        TCreate CalcularTotales(TCreate factura);
         Task<Response<TResponse>> CrearAsync(TCreate factura);
         Task<Response<bool>> AnularAsync(int id);
     }

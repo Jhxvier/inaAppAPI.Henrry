@@ -14,10 +14,7 @@ using System.Threading.Tasks;
 
 namespace inaApp.Services
 {
-    public class FacturaService : IFacturaService<
-        FacturaResponseDTO,
-        FacturaListDTO,
-        FacturaCreateDTO>
+    public class FacturaService : IFacturaService <FacturaResponseDTO, FacturaListDTO, FacturaCreateDTO>
     {
         private const decimal PorcentajeImpuesto = 0.13m; // 13% de impuesto costa rica
         private readonly ApplicationDbContext _context;
@@ -58,104 +55,148 @@ namespace inaApp.Services
             };
         }
 
-        public async Task<Response<FacturaResponseDTO>> CrearAsync(FacturaCreateDTO dto)
+        public FacturaCreateDTO CalcularTotales(FacturaCreateDTO dto)
         {
-            var cliente = await _context.Cliente
-                .SingleOrDefaultAsync(c => c.IdCliente == dto.ClienteId && c.Estado);
-
-            if (cliente == null)
-            {
-                throw new InvalidOperationException("El cliente seleccionado no existe o está inactivo.");
-            }
-
-            if (dto.Detalles == null || dto.Detalles.Count == 0)
-            {
-                throw new InvalidOperationException("Debe agregar al menos un producto.");
-            }
-
-            if (dto.Descuento < 0)
-            {
-                throw new InvalidOperationException("El descuento no puede ser negativo.");
-            }
-
-            if (dto.Detalles.Select(d => d.ProductoId).Distinct().Count() != dto.Detalles.Count)
-            {
-                throw new InvalidOperationException("No se debe agregar dos veces el mismo producto.");
-            }
-
-            var detallesFactura = new List<FacturaDetalle>();
             foreach (var detalle in dto.Detalles)
             {
-                var producto = await _context.Producto
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(p => p.Id == detalle.ProductoId && p.estado);
-
-                if (producto == null)
-                {
-                    throw new InvalidOperationException("El producto seleccionado no existe o está inactivo.");
-                }
-
-                if (detalle.Cantidad <= 0)
-                {
-                    throw new InvalidOperationException("La cantidad debe ser mayor que cero.");
-                }
-
-                if (producto.Precio <= 0)
-                {
-                    throw new InvalidOperationException($"El producto {producto.Nombre} no tiene un precio válido.");
-                }
-
-                if (producto.Stock < detalle.Cantidad)
-                {
-                    throw new InvalidOperationException($"El producto {producto.Nombre} no tiene suficiente stock.");
-                }
-
-                var subtotalLinea = detalle.Cantidad * producto.Precio;
-                var impuestoLinea = subtotalLinea * PorcentajeImpuesto;
-                detallesFactura.Add(new FacturaDetalle
-                {
-                    ProductoId = producto.Id,
-                    Cantidad = detalle.Cantidad,
-                    PrecioUnitario = producto.Precio,
-                    Subtotal = subtotalLinea,
-                    Impuesto = impuestoLinea,
-                    TotalLinea = subtotalLinea + impuestoLinea
-                });
+                detalle.Subtotal = detalle.Cantidad * detalle.PrecioUnitario;
+                detalle.Impuesto = detalle.Subtotal * PorcentajeImpuesto;
+                detalle.TotalLinea = detalle.Subtotal + detalle.Impuesto;
             }
 
-            var subtotal = detallesFactura.Sum(d => d.Subtotal);
-            var impuesto = detallesFactura.Sum(d => d.Impuesto);
+            dto.Subtotal = dto.Detalles.Sum(d => d.Subtotal);
+            dto.Impuesto = dto.Detalles.Sum(d => d.Impuesto);
+            dto.Total = dto.Subtotal + dto.Impuesto - dto.Descuento;
+            return dto;
+        }
 
-            if (dto.Descuento > subtotal)
+        public async Task<Response<FacturaResponseDTO>> CrearAsync(FacturaCreateDTO dto)
+        {
+            await using var transaction = await _context.Database
+                .BeginTransactionAsync(IsolationLevel.Serializable);
+
+            try
             {
-                throw new InvalidOperationException("El descuento no puede superar el subtotal.");
+                var clienteExiste = await _context.Cliente
+                    .AnyAsync(c => c.IdCliente == dto.ClienteId && c.Estado);
+
+                if (!clienteExiste)
+                {
+                    throw new InvalidOperationException("El cliente seleccionado no existe o está inactivo.");
+                }
+
+                if (dto.Detalles == null || dto.Detalles.Count == 0)
+                {
+                    throw new InvalidOperationException("Debe agregar al menos un producto.");
+                }
+
+                if (dto.Descuento < 0)
+                {
+                    throw new InvalidOperationException("El descuento no puede ser negativo.");
+                }
+
+                if (dto.Detalles.Select(d => d.ProductoId).Distinct().Count() != dto.Detalles.Count)
+                {
+                    throw new InvalidOperationException("No se debe agregar dos veces el mismo producto.");
+                }
+
+                var detallesFactura = new List<FacturaDetalle>();
+                foreach (var detalle in dto.Detalles)
+                {
+                    var producto = await _context.Producto
+                        .SingleOrDefaultAsync(p => p.Id == detalle.ProductoId && p.estado)
+                        ?? throw new InvalidOperationException(
+                            "El producto seleccionado no existe o está inactivo.");
+
+                    if (detalle.Cantidad <= 0)
+                    {
+                        throw new InvalidOperationException("La cantidad debe ser mayor que cero.");
+                    }
+
+                    if (producto.Precio <= 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"El producto {producto.Nombre} no tiene un precio válido.");
+                    }
+
+                    if (producto.Stock < detalle.Cantidad)
+                    {
+                        throw new InvalidOperationException(
+                            $"El producto {producto.Nombre} no tiene suficiente stock.");
+                    }
+
+                    var subtotalLinea = detalle.Cantidad * producto.Precio;
+                    var impuestoLinea = subtotalLinea * PorcentajeImpuesto;
+                    detallesFactura.Add(new FacturaDetalle
+                    {
+                        ProductoId = producto.Id,
+                        Cantidad = detalle.Cantidad,
+                        PrecioUnitario = producto.Precio,
+                        Subtotal = subtotalLinea,
+                        Impuesto = impuestoLinea,
+                        TotalLinea = subtotalLinea + impuestoLinea
+                    });
+                }
+
+                var subtotal = detallesFactura.Sum(d => d.Subtotal);
+                var impuesto = detallesFactura.Sum(d => d.Impuesto);
+
+                if (dto.Descuento > subtotal)
+                {
+                    throw new InvalidOperationException("El descuento no puede superar el subtotal.");
+                }
+
+                var total = subtotal + impuesto - dto.Descuento;
+                if (total <= 0)
+                {
+                    throw new InvalidOperationException("El total de la factura debe ser mayor que cero.");
+                }
+
+                var factura = _mapper.Map<Factura>(dto);
+                factura.Detalles = new List<FacturaDetalle>();
+                factura.Subtotal = subtotal;
+                factura.Impuesto = impuesto;
+                factura.Total = total;
+                factura.Estado = true;
+                factura.NumeroFactura = $"TMP-{Guid.NewGuid():N}"[..30];
+
+                _context.Factura.Add(factura);
+                await _context.SaveChangesAsync();
+                factura.NumeroFactura = $"FAC-{factura.Id}";
+
+                foreach (var detalle in detallesFactura)
+                {
+                    detalle.FacturaId = factura.Id;
+                    _context.FacturaDetalle.Add(detalle);
+
+                    var producto = await _context.Producto
+                        .SingleAsync(p => p.Id == detalle.ProductoId);
+                    producto.Stock -= detalle.Cantidad;
+                }
+
+                await _context.SaveChangesAsync();
+                var facturaCreada = await _facturaRepository.ObtenerPorIdAsync(factura.Id)
+                    ?? throw new InvalidOperationException("No se pudo recuperar la factura creada.");
+                var facturaRespuesta = _mapper.Map<FacturaResponseDTO>(facturaCreada);
+                await transaction.CommitAsync();
+
+                return new Response<FacturaResponseDTO>
+                {
+                    Success = true,
+                    Message = "Factura creada correctamente.",
+                    Data = facturaRespuesta
+                };
             }
-
-            var total = subtotal + impuesto - dto.Descuento;
-            if (total <= 0)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("El total de la factura debe ser mayor que cero.");
+                await transaction.RollbackAsync();
+                return new Response<FacturaResponseDTO>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Data = null!
+                };
             }
-
-            var factura = _mapper.Map<Factura>(dto);
-            factura.Detalles = detallesFactura;
-            factura.Subtotal = subtotal;
-            factura.Impuesto = impuesto;
-            factura.Total = total;
-            factura.Estado = true;
-            factura.NumeroFactura = $"TMP-{Guid.NewGuid():N}"[..30];
-
-            await _facturaRepository.CrearAsync(factura);
-
-            var facturaCreada = await _facturaRepository.ObtenerPorIdAsync(factura.Id)
-                ?? throw new InvalidOperationException("No se pudo recuperar la factura creada.");
-
-            return new Response<FacturaResponseDTO>
-            {
-                Success = true,
-                Message = "Factura creada correctamente.",
-                Data = _mapper.Map<FacturaResponseDTO>(facturaCreada)
-            };
         }
 
         public async Task<Response<bool>> AnularAsync(int id)

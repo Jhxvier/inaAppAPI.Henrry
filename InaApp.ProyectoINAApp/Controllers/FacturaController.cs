@@ -110,6 +110,13 @@ namespace InaApp.ProyectoINAApp.Controllers
                 var facturaDTO = _mapper.Map<FacturaCreateDTO>(facturaVM);
                 var response = await _facturaService.CrearAsync(facturaDTO);
 
+                if (!response.Success || response.Data == null)
+                {
+                    ModelState.AddModelError(string.Empty, response.Message);
+                    CalcularTotales(facturaVM);
+                    return View(await CargarListasAsync(facturaVM));
+                }
+
                 TempData["Mensaje"] = response.Message;
                 return RedirectToAction(nameof(Details), new { id = response.Data.Id });
             }
@@ -121,6 +128,8 @@ namespace InaApp.ProyectoINAApp.Controllers
             }
         }
 
+        // Agrega un detalle mediante un envío normal del formulario. De esta forma,
+        // la construcción de la factura no depende de JavaScript en el navegador.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AgregarProducto(FacturaCreateViewModel facturaVM)
@@ -191,6 +200,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             return View("Create", await CargarListasAsync(facturaVM));
         }
 
+
         // GET: FacturaController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -223,20 +233,21 @@ namespace InaApp.ProyectoINAApp.Controllers
             return await Anular(id);
         }
 
-        private static void CalcularTotales(FacturaCreateViewModel facturaVM)
+        private void CalcularTotales(FacturaCreateViewModel facturaVM)
         {
-            const decimal porcentajeImpuesto = 0.13m;
+            var facturaDTO = _mapper.Map<FacturaCreateDTO>(facturaVM);
+            var facturaCalculada = _facturaService.CalcularTotales(facturaDTO);
 
-            foreach (var detalle in facturaVM.Detalles)
+            for (var indice = 0; indice < facturaVM.Detalles.Count; indice++)
             {
-                detalle.Subtotal = detalle.Cantidad * detalle.PrecioUnitario;
-                detalle.Impuesto = detalle.Subtotal * porcentajeImpuesto;
-                detalle.TotalLinea = detalle.Subtotal + detalle.Impuesto;
+                facturaVM.Detalles[indice].Subtotal = facturaCalculada.Detalles[indice].Subtotal;
+                facturaVM.Detalles[indice].Impuesto = facturaCalculada.Detalles[indice].Impuesto;
+                facturaVM.Detalles[indice].TotalLinea = facturaCalculada.Detalles[indice].TotalLinea;
             }
 
-            facturaVM.Subtotal = facturaVM.Detalles.Sum(d => d.Subtotal);
-            facturaVM.Impuesto = facturaVM.Detalles.Sum(d => d.Impuesto);
-            facturaVM.Total = facturaVM.Subtotal + facturaVM.Impuesto - facturaVM.Descuento;
+            facturaVM.Subtotal = facturaCalculada.Subtotal;
+            facturaVM.Impuesto = facturaCalculada.Impuesto;
+            facturaVM.Total = facturaCalculada.Total;
         }
 
 

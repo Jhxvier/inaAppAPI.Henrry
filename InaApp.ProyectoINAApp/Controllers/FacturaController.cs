@@ -101,6 +101,7 @@ namespace InaApp.ProyectoINAApp.Controllers
 
             if (!ModelState.IsValid)
             {
+                CalcularTotales(facturaVM);
                 return View(await CargarListasAsync(facturaVM));
             }
 
@@ -115,8 +116,79 @@ namespace InaApp.ProyectoINAApp.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                CalcularTotales(facturaVM);
                 return View(await CargarListasAsync(facturaVM));
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AgregarProducto(FacturaCreateViewModel facturaVM)
+        {
+            var facturaConListas = await CargarListasAsync(facturaVM);
+            var producto = facturaConListas.ProductosDisponibles
+                .SingleOrDefault(p => p.Id == facturaVM.ProductoSeleccionadoId);
+            var cantidad = facturaVM.Cantidad.GetValueOrDefault();
+
+            ModelState.Clear();
+
+            if (producto == null || cantidad < 1)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Seleccione un producto e indique una cantidad válida.");
+            }
+            else if (cantidad > producto.Stock)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No hay stock suficiente para la cantidad indicada.");
+            }
+            else if (facturaVM.Detalles.Any(d => d.ProductoId == producto.Id))
+            {
+                ModelState.AddModelError(string.Empty,
+                    "El producto ya fue agregado a la factura.");
+            }
+            else
+            {
+                facturaVM.Detalles.Add(new FacturaDetalleViewModel
+                {
+                    ProductoId = producto.Id,
+                    Producto = producto.Nombre,
+                    Cantidad = cantidad,
+                    PrecioUnitario = producto.Precio
+                });
+
+                facturaVM.ProductoSeleccionadoId = null;
+                facturaVM.Cantidad = null;
+            }
+
+            CalcularTotales(facturaVM);
+            return View("Create", facturaConListas);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EliminarProducto(
+            FacturaCreateViewModel facturaVM,
+            int indice)
+        {
+            ModelState.Clear();
+
+            if (indice >= 0 && indice < facturaVM.Detalles.Count)
+            {
+                facturaVM.Detalles.RemoveAt(indice);
+            }
+
+            CalcularTotales(facturaVM);
+            return View("Create", await CargarListasAsync(facturaVM));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ActualizarTotales(FacturaCreateViewModel facturaVM)
+        {
+            ModelState.Clear();
+            CalcularTotales(facturaVM);
+            return View("Create", await CargarListasAsync(facturaVM));
         }
 
         // GET: FacturaController/Edit/5
@@ -150,6 +222,23 @@ namespace InaApp.ProyectoINAApp.Controllers
         {
             return await Anular(id);
         }
+
+        private static void CalcularTotales(FacturaCreateViewModel facturaVM)
+        {
+            const decimal porcentajeImpuesto = 0.13m;
+
+            foreach (var detalle in facturaVM.Detalles)
+            {
+                detalle.Subtotal = detalle.Cantidad * detalle.PrecioUnitario;
+                detalle.Impuesto = detalle.Subtotal * porcentajeImpuesto;
+                detalle.TotalLinea = detalle.Subtotal + detalle.Impuesto;
+            }
+
+            facturaVM.Subtotal = facturaVM.Detalles.Sum(d => d.Subtotal);
+            facturaVM.Impuesto = facturaVM.Detalles.Sum(d => d.Impuesto);
+            facturaVM.Total = facturaVM.Subtotal + facturaVM.Impuesto - facturaVM.Descuento;
+        }
+
 
         // POST: FacturaController/Delete/5
         [HttpPost]

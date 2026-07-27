@@ -41,9 +41,49 @@ namespace inaApp.Repository
 
         public async Task<Factura> CrearAsync(Factura factura)
         {
-            _dbContext.Factura.Add(factura);
-            await _dbContext.SaveChangesAsync();
-            return factura;
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                var detalles = factura.Detalles.ToList();
+                factura.Detalles.Clear();
+
+                _dbContext.Factura.Add(factura);
+                await _dbContext.SaveChangesAsync();
+
+                factura.NumeroFactura = $"FAC-{factura.Id}";
+
+                foreach (var detalle in detalles)
+                {
+                    detalle.FacturaId = factura.Id;
+                    _dbContext.FacturaDetalle.Add(detalle);
+
+                    var producto = await _dbContext.Producto
+                        .SingleOrDefaultAsync(p => p.Id == detalle.ProductoId && p.estado)
+                        ?? throw new InvalidOperationException(
+                            "El producto seleccionado no existe o está inactivo.");
+
+                    if (producto.Stock < detalle.Cantidad)
+                    {
+                        throw new InvalidOperationException(
+                            $"El producto {producto.Nombre} no tiene suficiente stock.");
+                    }
+
+                    producto.Stock -= detalle.Cantidad;
+                }
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                factura.Detalles = detalles;
+                return factura;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+
         }
 
         public async Task<Factura> ActualizarAsync(Factura factura)

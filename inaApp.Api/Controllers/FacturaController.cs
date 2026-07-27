@@ -57,11 +57,11 @@ namespace inaApp.Api.Controllers
         }
 
         // GET: FacturaController/Create
-        [HttpGet("Create")]
+        /*[HttpGet("Create")]
         public ActionResult Create()
         {
             return View();
-        }
+        }*/
 
         // POST: FacturaController/Create
         [HttpPost]
@@ -94,14 +94,14 @@ namespace inaApp.Api.Controllers
 
 
         // GET: FacturaController/Edit/5
-        [HttpGet("Edit/{id}")]
+        /*[HttpGet("Edit/{id}")]
         public ActionResult Edit(int id)
         {
             return View();
-        }
+        }*/
 
         // POST: FacturaController/Edit/5
-        [HttpPost("Edit/{id}")]
+        /*[HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
@@ -113,17 +113,17 @@ namespace inaApp.Api.Controllers
             {
                 return View();
             }
-        }
+        }*/
 
         // GET: FacturaController/Delete/5
-        [HttpGet("Delete/{id}")]
+        /*[HttpGet("Delete/{id}")]
         public ActionResult Delete(int id)
         {
             return View();
-        }
+        }*/
 
         // POST: FacturaController/Delete/5
-        [HttpPost("Delete/{id}")]
+        /*[HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
@@ -135,7 +135,7 @@ namespace inaApp.Api.Controllers
             {
                 return View();
             }
-        }
+        }*/
 
         [HttpPut("{id}/anular")]
         public async Task<ActionResult> Anular(int id)

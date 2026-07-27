@@ -19,7 +19,7 @@ namespace inaApp.Services
         FacturaListDTO,
         FacturaCreateDTO>
     {
-        private const decimal PorcentajeImpuesto = 0.13m;
+        private const decimal PorcentajeImpuesto = 0.13m; // 13% de impuesto costa rica
         private readonly ApplicationDbContext _context;
         private readonly IFacturaRepository<Factura> _facturaRepository;
         private readonly IMapper _mapper;
@@ -83,11 +83,12 @@ namespace inaApp.Services
                 throw new InvalidOperationException("No se debe agregar dos veces el mismo producto.");
             }
 
-            // Los bloqueos de actualización impiden que dos ventas simultáneas descuenten el mismo stock. La transacción conserva los bloqueos hasta confirmar o revertir.
+            // Se inicia una transacción para asegurar que todas las operaciones se realicen de manera atómica.
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
+                // Se crea la lista de detalles de la factura y se valida cada producto.
                 var detallesFactura = new List<FacturaDetalle>();
                 foreach (var detalle in dto.Detalles)
                 {
@@ -114,9 +115,10 @@ namespace inaApp.Services
                         throw new InvalidOperationException($"El producto {producto.Nombre} no tiene suficiente stock.");
                     }
 
-                    producto.Stock -= detalle.Cantidad;
-                    var subtotalLinea = detalle.Cantidad * producto.Precio;
-                    var impuestoLinea = subtotalLinea * PorcentajeImpuesto;
+                    producto.Stock -= detalle.Cantidad;// Se actualiza el stock del producto en la base de datos.
+                    var subtotalLinea = detalle.Cantidad * producto.Precio;// Se calcula el subtotal de la línea.
+                    var impuestoLinea = subtotalLinea * PorcentajeImpuesto;// Se calcula el impuesto de la línea.
+                    // Se agrega el detalle de la factura a la lista de detalles.
                     detallesFactura.Add(new FacturaDetalle
                     {
                         ProductoId = producto.Id,
@@ -127,7 +129,7 @@ namespace inaApp.Services
                         TotalLinea = subtotalLinea + impuestoLinea
                     });
                 }
-
+                // Se calculan los totales de la factura.
                 var subtotal = detallesFactura.Sum(d => d.Subtotal);
                 var impuesto = detallesFactura.Sum(d => d.Impuesto);
 
@@ -136,29 +138,34 @@ namespace inaApp.Services
                     throw new InvalidOperationException("El descuento no puede superar el subtotal.");
                 }
 
-                var total = subtotal + impuesto - dto.Descuento;
+                var total = subtotal + impuesto - dto.Descuento;// Se calcula el total de la factura.
+
                 if (total <= 0)
                 {
                     throw new InvalidOperationException("El total de la factura debe ser mayor que cero.");
                 }
 
+                // Se crea la factura y se asignan los valores calculados.
                 var factura = _mapper.Map<Factura>(dto);
                 factura.Detalles = detallesFactura;
                 factura.Subtotal = subtotal;
                 factura.Impuesto = impuesto;
                 factura.Total = total;
                 factura.Estado = true;
-                // Se usa un valor temporal único mientras la base de datos genera el Id.
+
+                // Se asigna un número de factura temporal para poder crear la factura en la base de datos y obtener su Id.
                 factura.NumeroFactura = $"TMP-{Guid.NewGuid():N}"[..30];
 
                 await _facturaRepository.CrearAsync(factura);
-                factura.NumeroFactura = $"FAC-{factura.Id}";
-                await _facturaRepository.ActualizarAsync(factura);
-                await transaction.CommitAsync();
+                factura.NumeroFactura = $"FAC-{factura.Id}";// Se asigna el número de factura definitivo basado en el Id generado.
+                await _facturaRepository.ActualizarAsync(factura);// Se actualiza la factura con el número definitivo.
+                await transaction.CommitAsync();// Se confirma la transacción.
 
+                // Se recupera la factura creada para devolverla en la respuesta.
                 var facturaCreada = await _facturaRepository.ObtenerPorIdAsync(factura.Id)
                     ?? throw new InvalidOperationException("No se pudo recuperar la factura creada.");
 
+                // Se devuelve la respuesta con la factura creada.
                 return new Response<FacturaResponseDTO>
                 {
                     Success = true,

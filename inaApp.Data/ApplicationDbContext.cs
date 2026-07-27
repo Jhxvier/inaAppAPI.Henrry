@@ -28,11 +28,11 @@ namespace inaApp.Data
             modelBuilder.Entity<Factura>(entity =>
             {
                 entity.HasIndex(f => f.NumeroFactura).IsUnique();
-                entity.HasOne(f => f.Cliente).WithMany(c => c.Facturas).HasForeignKey(f => f.ClienteId).OnDelete(DeleteBehavior.Restrict);
-                entity.HasMany(f => f.Detalles).WithOne(d => d.Factura).HasForeignKey(d => d.FacturaId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(f => f.Cliente).WithMany(c => c.Facturas).HasForeignKey(f => f.ClienteId).OnDelete(DeleteBehavior.Restrict);// Relación uno a muchos entre Factura y Cliente
+                entity.HasMany(f => f.Detalles).WithOne(d => d.Factura).HasForeignKey(d => d.FacturaId).OnDelete(DeleteBehavior.Cascade);// Relación uno a muchos entre Factura y FacturaDetalle
             });
             modelBuilder.Entity<FacturaDetalle>()
-                .HasOne(d => d.Producto).WithMany(p => p.FacturaDetalles).HasForeignKey(d => d.ProductoId).OnDelete(DeleteBehavior.Restrict);
+                .HasOne(d => d.Producto).WithMany(p => p.FacturaDetalles).HasForeignKey(d => d.ProductoId).OnDelete(DeleteBehavior.Restrict);// Relación uno a muchos entre FacturaDetalle y Producto
 
             base.OnModelCreating(modelBuilder);
         }

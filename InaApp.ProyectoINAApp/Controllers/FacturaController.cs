@@ -283,7 +283,7 @@ namespace InaApp.ProyectoINAApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmarAnulacion(int id)
         {
-            try
+            /*try
             {
                 var response = await _facturaService.AnularAsync(id);
                 TempData["Mensaje"] = response.Message;
@@ -291,7 +291,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             catch (Exception ex)
             {
                 TempData["Mensaje"] = ex.Message;
-            }
+            }*/
 
             return RedirectToAction(nameof(Index));
         }

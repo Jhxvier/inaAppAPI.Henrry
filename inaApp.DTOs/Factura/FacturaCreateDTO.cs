@@ -4,11 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static inaApp.Common.Enums.Enums;
 
 namespace inaApp.DTOs.Factura
 {
     public class FacturaCreateDTO
     {
+        public TipoDocumento TipoDocumento { get; set; } = TipoDocumento.FacturaElectronica;
+        public int? FacturaOrigenId { get; set; }
+        public string? NumeroDocumentoOriginal { get; set; }
+        public TipoDocumento? TipoDocumentoOriginal { get; set; }
+        public string? Motivo { get; set; }
         public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
         [Range(1, int.MaxValue)]

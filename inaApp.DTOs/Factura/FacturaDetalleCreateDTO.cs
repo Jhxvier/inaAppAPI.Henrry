@@ -16,6 +16,9 @@ namespace inaApp.DTOs.Factura
         public int Cantidad { get; set; }
 
         public decimal PrecioUnitario { get; set; }
+        [Range(0, 100)] public decimal PorcentajeImpuesto { get; set; }
+        [Range(0, 100)] public decimal PorcentajeDescuento { get; set; }
+        public decimal Descuento { get; set; }
         public decimal Subtotal { get; set; }
         public decimal Impuesto { get; set; }
         public decimal TotalLinea { get; set; }

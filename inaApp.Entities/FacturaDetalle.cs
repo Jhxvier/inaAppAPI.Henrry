@@ -21,6 +21,15 @@ namespace inaApp.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal PrecioUnitario { get; set; }
 
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal PorcentajeImpuesto { get; set; }
+
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal PorcentajeDescuento { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Descuento { get; set; }
+
         [Column(TypeName = "decimal(18,2)")]
         public decimal Subtotal { get; set; }
 

@@ -80,6 +80,10 @@ namespace inaApp.Api.Controllers
                 }
 
                 var response = await _facturaService.CrearAsync(facturaDTO);
+
+                if (!response.Success || response.Data == null)
+                    return BadRequest(response.Message);
+
                 return Created("Factura creada", response);
             }
             catch (InvalidOperationException ex)
@@ -137,7 +141,7 @@ namespace inaApp.Api.Controllers
             }
         }*/
 
-        [HttpPut("{id}/anular")]
+        /*[HttpPut("{id}/anular")]
         public async Task<ActionResult> Anular(int id)
         {
             try
@@ -157,6 +161,6 @@ namespace inaApp.Api.Controllers
             {
                 return StatusCode(500, "Error, contacte con el administrador");
             }
-        }
+        }*/
     }
 }

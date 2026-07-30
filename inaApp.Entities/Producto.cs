@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static inaApp.Common.Enums.Enums;
 
 namespace inaApp.Entities
 {
@@ -22,6 +23,9 @@ namespace inaApp.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //esta anotación indica que esta propiedad se mapeará a una columna de tipo identidad en la base de datos, lo que significa que su valor se generará automáticamente al insertar un nuevo registro
         public int Id { get; set; }
 
+        [Required, StringLength(30)]
+        public string Codigo { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "El nombre del producto es obligatorio")]
         [StringLength(100, MinimumLength =3, ErrorMessage = "El nombre del producto debe tener entre 3 y 100 caracteres")]
         public string Nombre { get; set; }
@@ -37,6 +41,17 @@ namespace inaApp.Entities
 
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
         public int CategoriaId { get; set; }
+
+        [Required]
+        public TipoImpuesto ImpuestoAplicable { get; set; } = TipoImpuesto.IVA;
+
+        [Column(TypeName = "decimal(5,2)")]
+        [Range(0, 100)]
+        public decimal PorcentajeImpuesto { get; set; } = 13;
+
+        [Column(TypeName = "decimal(5,2)")]
+        [Range(0, 100)]
+        public decimal DescuentoMaximo { get; set; }
 
         [ForeignKey(nameof(CategoriaId))]
         public Categoria Categoria { get; set; }

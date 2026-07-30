@@ -27,6 +27,8 @@ namespace inaApp.Services
 
         public async Task<Response<ProductoResponseDTO>> ActualizarAsync(ProductoUpdateDTO entity)
         {
+            ValidarDatosFiscales(entity.Codigo, entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
+
             //reglas de negocio
             var productoExistente = await _productoRepo.ObtenerPorIdAsync(entity.Id);
             if (productoExistente == null)
@@ -55,6 +57,9 @@ namespace inaApp.Services
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
 
+            if (productos.Any(p => p.Codigo.ToLower() == entity.Codigo.ToLower() && p.Id != entity.Id))
+                throw new ArgumentException($"El código {entity.Codigo} ya está registrado.");
+
             var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
             if (categoria == null)
             {
@@ -80,6 +85,7 @@ namespace inaApp.Services
 
         public async Task<Response<ProductoResponseDTO>> CrearAsync(ProductoCreateDTO entity)
         {
+            ValidarDatosFiscales(entity.Codigo, entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
             //reglas de negocio
 
             if (string.IsNullOrWhiteSpace(entity.Nombre))
@@ -103,6 +109,9 @@ namespace inaApp.Services
             {
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
+
+            if (productos.Any(p => p.Codigo.ToLower() == entity.Codigo.ToLower()))
+                throw new ArgumentException($"El código {entity.Codigo} ya está registrado.");
 
             var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
             if (categoria == null)
@@ -191,5 +200,13 @@ namespace inaApp.Services
             };
 
         }
+        private static void ValidarDatosFiscales(string codigo, decimal impuesto, decimal descuento, inaApp.Common.Enums.Enums.TipoImpuesto tipo)
+        {
+            if (string.IsNullOrWhiteSpace(codigo)) throw new ArgumentException("El código del producto es obligatorio.");
+            if (!Enum.IsDefined(tipo)) throw new ArgumentException("El impuesto aplicable no es válido.");
+            if (impuesto < 0 || impuesto > 100) throw new ArgumentException("El porcentaje de impuesto debe estar entre 0 y 100.");
+            if (descuento < 0 || descuento > 100) throw new ArgumentException("El descuento máximo debe estar entre 0 y 100.");
+        }
+
     }
 }

@@ -5,11 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static inaApp.Common.Enums.Enums;
 
 namespace inaApp.DTOs.Producto
 {
     public class ProductoUpdateDTO
     {
+        [Required, StringLength(30)]
+        public string Codigo { get; set; } = string.Empty;
         [Required(ErrorMessage = "El ID del producto es obligatorio")]
         public int Id { get; set; }
 
@@ -30,6 +33,14 @@ namespace inaApp.DTOs.Producto
 
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
         public int CategoriaProductoId { get; set; }
+        [Required]
+        public TipoImpuesto ImpuestoAplicable { get; set; } = TipoImpuesto.IVA;
+
+        [Range(0, 100, ErrorMessage = "El porcentaje de impuesto debe estar entre 0 y 100.")]
+        public decimal PorcentajeImpuesto { get; set; } = 13;
+
+        [Range(0, 100, ErrorMessage = "El descuento máximo debe estar entre 0 y 100.")]
+        public decimal DescuentoMaximo { get; set; }
 
     }
 }

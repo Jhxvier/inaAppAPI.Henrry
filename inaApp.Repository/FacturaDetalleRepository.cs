@@ -40,29 +40,22 @@ namespace inaApp.Repository
 
         public async Task<FacturaDetalle> CrearAsync(FacturaDetalle entity)
         {
-            _dbContext.FacturaDetalle.Add(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            await Task.CompletedTask;
+            throw new InvalidOperationException(
+                "Las líneas solo pueden crearse al emitir un documento mediante FacturaService.");
         }
 
         public async Task<FacturaDetalle> ActualizarAsync(FacturaDetalle entity)
         {
-            _dbContext.FacturaDetalle.Update(entity);
-            await _dbContext.SaveChangesAsync();
-            return entity;
+            await Task.CompletedTask;
+            throw new InvalidOperationException(
+                "No se pueden modificar líneas de una factura emitida; genere una Nota de Crédito.");
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
-            var detalle = await _dbContext.FacturaDetalle.FindAsync(id);
-            if (detalle == null)
-            {
-                return false;
-            }
-
-            _dbContext.FacturaDetalle.Remove(detalle);
-            await _dbContext.SaveChangesAsync();
-            return true;
+            await Task.CompletedTask;
+            return false;
         }
     }
 }

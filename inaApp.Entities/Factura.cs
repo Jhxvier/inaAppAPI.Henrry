@@ -1,10 +1,12 @@
-﻿using System;
+﻿using inaApp.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static inaApp.Common.Enums.Enums;
 
 namespace inaApp.Entities
 {
@@ -18,7 +20,13 @@ namespace inaApp.Entities
         public string NumeroFactura { get; set; } = string.Empty;
 
         public DateTime Fecha { get; set; }
+        [Required]
+        public TipoDocumento TipoDocumento { get; set; } = TipoDocumento.FacturaElectronica;
         public int ClienteId { get; set; }
+        public int? FacturaOrigenId { get; set; }
+        [MaxLength(30)] public string? NumeroDocumentoOriginal { get; set; }
+        public TipoDocumento? TipoDocumentoOriginal { get; set; }
+        [MaxLength(500)] public string? Motivo { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Subtotal { get; set; }
@@ -36,5 +44,8 @@ namespace inaApp.Entities
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public Cliente Cliente { get; set; } = null!;
         public ICollection<FacturaDetalle> Detalles { get; set; } = new List<FacturaDetalle>();
+        public Factura? FacturaOrigen { get; set; }
+        public ICollection<Factura> NotasCredito { get; set; } = new List<Factura>();
+
     }
 }

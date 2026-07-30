@@ -13,12 +13,12 @@ namespace inaApp.DTOs.Cliente
     {
         public int IdCliente { get; set; }
         public TipoIdentificacion TipoIdentificacion { get; set; }
-        public string NumeroIdentificacion { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido1 { get; set; }
+        public string NumeroIdentificacion { get; set; } = string.Empty;
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido1 { get; set; } = string.Empty;
         public string? Apellido2 { get; set; }
         public string? CorreoElectronico { get; set; }
         public string? Telefono { get; set; }
-
+        public bool Estado { get; set; }
     }
 }

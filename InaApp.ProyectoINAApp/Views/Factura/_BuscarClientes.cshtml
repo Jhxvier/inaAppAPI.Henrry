@@ -1,0 +1,13 @@
+﻿@model InaApp.ProyectoINAApp.Models.Factura.FacturaCreateViewModel
+
+<div class="modal fade" id="clientesModal" tabindex="-1" aria-labelledby="clientesModalTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h5 id="clientesModalTitulo">Buscar cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body">
+                <div class="row mb-2"><div class="col"><input id="filtroIdentificacion" class="form-control" placeholder="Filtrar por identificación"></div><div class="col"><input id="filtroCliente" class="form-control" placeholder="Filtrar por nombre"></div></div>
+                <table class="table"><thead><tr><th>Identificación</th><th>Nombre</th><th></th></tr></thead><tbody id="clientesBody"></tbody></table>
+            </div>
+        </div>
+    </div>
+</div>

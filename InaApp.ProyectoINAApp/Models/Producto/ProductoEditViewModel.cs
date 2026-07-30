@@ -1,10 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
+using static inaApp.Common.Enums.Enums;
 
 namespace InaApp.ProyectoINAApp.Models.Producto
 {
     public class ProductoEditViewModel
     {
+        [Required, StringLength(30), Display(Name = "Código")]
+        public string Codigo { get; set; } = string.Empty;
+        [Required, Display(Name = "Impuesto aplicable")]
+        public TipoImpuesto ImpuestoAplicable { get; set; } = TipoImpuesto.IVA;
+        [Range(0, 100), Display(Name = "Porcentaje de impuesto")]
+        public decimal PorcentajeImpuesto { get; set; } = 13;
+        [Range(0, 100), Display(Name = "Descuento máximo permitido")]
+        public decimal DescuentoMaximo { get; set; }
         [Required(ErrorMessage = "El ID del producto es obligatorio")]
         public int Id { get; set; }
 

@@ -20,6 +20,7 @@
         <thead class="table-dark">
             <tr>
                 <th>Número</th>
+                <th>Documento</th>
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Subtotal</th>
@@ -37,6 +38,7 @@
                 {
                     <tr>
                         <td>@factura.NumeroFactura</td>
+                        <td>@factura.TipoDocumento</td>
                         <td>@factura.Fecha.ToString("dd/MM/yyyy")</td>
                         <td>@factura.Cliente</td>
                         <td>₡@factura.Subtotal.ToString("N2")</td>
@@ -48,7 +50,10 @@
                             <a asp-action="Details" asp-route-id="@factura.Id" class="btn btn-info btn-sm">Detalles</a>
                             @if (factura.Estado)
                             {
-                                <a asp-action="Anular" asp-route-id="@factura.Id" class="btn btn-danger btn-sm">Anular</a>
+                                @if (factura.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica)
+                                {
+                                    <a asp-action="NotaCredito" asp-route-id="@factura.Id" class="btn btn-warning btn-sm">Nota de crédito</a>
+                                }
                             }
                         </td>
                     </tr>
@@ -57,7 +62,7 @@
             else
             {
                 <tr>
-                    <td colspan="9" class="text-center">No existen facturas registradas.</td>
+                    <td colspan="10" class="text-center">No existen documentos registrados.</td>
                 </tr>
             }
         </tbody>

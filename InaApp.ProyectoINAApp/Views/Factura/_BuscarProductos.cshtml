@@ -1,0 +1,13 @@
+﻿@model InaApp.ProyectoINAApp.Models.Factura.FacturaCreateViewModel
+
+<div class="modal fade" id="productosModal" tabindex="-1" aria-labelledby="productosModalTitulo" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header"><h5 id="productosModalTitulo">Buscar producto</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+            <div class="modal-body">
+                <div class="row mb-2"><div class="col"><input id="filtroCodigo" class="form-control" placeholder="Filtrar por código"></div><div class="col"><input id="filtroProducto" class="form-control" placeholder="Filtrar por nombre"></div></div>
+                <table class="table"><thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Impuesto</th><th>Existencias</th><th></th></tr></thead><tbody id="productosBody"></tbody></table>
+            </div>
+        </div>
+    </div>
+</div>

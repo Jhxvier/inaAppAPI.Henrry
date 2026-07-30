@@ -13,12 +13,14 @@
             Información del producto
         </div>
         <div class="card-body">
-            <p><strong>Id:</strong> @Model.Id</p>
+            <p><strong>Código:</strong> @Model.Codigo</p>
             <p><strong>Nombre:</strong> @Model.Nombre</p>
             <p><strong>Descripción:</strong> @Model.Descripcion</p>
             <p><strong>Precio:</strong> ₡@Model.Precio.ToString("N2")</p>
             <p><strong>Stock:</strong> @Model.Stock</p>
             <p><strong>Categoría:</strong> @Model.CategoriaProductoNombre</p>
+            <p><strong>Impuesto:</strong> @Model.ImpuestoAplicable (@Model.PorcentajeImpuesto.ToString("N2") %)</p>
+            <p><strong>Descuento máximo permitido:</strong> @Model.DescuentoMaximo.ToString("N2") %</p>
         </div>
     </div>
 

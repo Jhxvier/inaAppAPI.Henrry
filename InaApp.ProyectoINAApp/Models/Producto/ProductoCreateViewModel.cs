@@ -6,8 +6,6 @@ namespace InaApp.ProyectoINAApp.Models.Producto
 {
     public class ProductoCreateViewModel
     {
-        [Required, StringLength(30), Display(Name = "Código")]
-        public string Codigo { get; set; } = string.Empty;
         [Required, Display(Name = "Impuesto aplicable")]
         public TipoImpuesto ImpuestoAplicable { get; set; } = TipoImpuesto.IVA;
         [Range(0, 100), Display(Name = "Porcentaje de impuesto")]

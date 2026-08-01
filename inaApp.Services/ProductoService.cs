@@ -53,7 +53,9 @@ namespace inaApp.Services
 
             //nombre no repetido
             var productos = await _productoRepo.ObtenerTodosAsync();
-            if (productos.Any(p => p.Nombre.ToLower() == entity.Nombre.ToLower()))
+            if (productos.Any(p =>
+                p.Id != entity.Id &&
+                string.Equals(p.Nombre, entity.Nombre, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }

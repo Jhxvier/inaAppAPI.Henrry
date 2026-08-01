@@ -41,15 +41,26 @@ namespace inaApp.Repository
 
         public async Task<Producto> CrearAsync(Producto entity)
         {
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                 _dbContext.Producto.Add(entity); // agregar el nuevo producto al contexto de la base de datos
-                await _dbContext.SaveChangesAsync(); // guardar los cambios en la base de datos
+                // Se utiliza un valor temporal único porque el Id de identidad
+                // todavía no existe antes del primer guardado.
+                entity.Codigo = $"TMP-{Guid.NewGuid():N}"[..30];
+                _dbContext.Producto.Add(entity);
+                await _dbContext.SaveChangesAsync();
+
+                // El código definitivo se deriva del Id generado por SQL Server.
+                entity.Codigo = $"PROD-{entity.Id}";
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
                 return await ObtenerPorIdAsync(entity.Id); // retornar el producto creado con su categoría
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                await transaction.RollbackAsync();
+                throw;
             }
         }
 

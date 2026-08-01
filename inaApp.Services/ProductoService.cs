@@ -27,7 +27,7 @@ namespace inaApp.Services
 
         public async Task<Response<ProductoResponseDTO>> ActualizarAsync(ProductoUpdateDTO entity)
         {
-            ValidarDatosFiscales(entity.Codigo, entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
+            ValidarDatosFiscales(entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
 
             //reglas de negocio
             var productoExistente = await _productoRepo.ObtenerPorIdAsync(entity.Id);
@@ -51,14 +51,12 @@ namespace inaApp.Services
                 throw new InvalidStockException("El stock debe ser mayor a 0");
             }
 
+            //nombre no repetido
             var productos = await _productoRepo.ObtenerTodosAsync();
-            if (productos.Any(p => p.Nombre.ToLower() == entity.Nombre.ToLower() && p.Id != entity.Id))
+            if (productos.Any(p => p.Nombre.ToLower() == entity.Nombre.ToLower()))
             {
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
-
-            if (productos.Any(p => p.Codigo.ToLower() == entity.Codigo.ToLower() && p.Id != entity.Id))
-                throw new ArgumentException($"El código {entity.Codigo} ya está registrado.");
 
             var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
             if (categoria == null)
@@ -66,11 +64,11 @@ namespace inaApp.Services
                 throw new NotFoundException($"La categoría con el id {entity.CategoriaProductoId} no existe");
             }
 
-
             //convertir el DTO a entidad y guardarlo en la base de datos
 
             var producto = _mapper.Map<Producto>(entity);
-            
+            producto.Codigo = productoExistente.Codigo;
+
             //actualizar producto
 
             producto = await _productoRepo.ActualizarAsync(producto);
@@ -81,11 +79,13 @@ namespace inaApp.Services
                 Message = "Producto actualizado correctamente",
                 Success = true
             };
+
         }
 
         public async Task<Response<ProductoResponseDTO>> CrearAsync(ProductoCreateDTO entity)
         {
-            ValidarDatosFiscales(entity.Codigo, entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
+            ValidarDatosFiscales(entity.PorcentajeImpuesto, entity.DescuentoMaximo, entity.ImpuestoAplicable);
+
             //reglas de negocio
 
             if (string.IsNullOrWhiteSpace(entity.Nombre))
@@ -109,10 +109,6 @@ namespace inaApp.Services
             {
                 throw new DuplicateNameException($"El producto {entity.Nombre} ya existe");
             }
-
-            if (productos.Any(p => p.Codigo.ToLower() == entity.Codigo.ToLower()))
-                throw new ArgumentException($"El código {entity.Codigo} ya está registrado.");
-
             var categoria = await _categoriaRepo.ObtenerPorIdAsync(entity.CategoriaProductoId);
             if (categoria == null)
             {
@@ -123,6 +119,7 @@ namespace inaApp.Services
             {
                 throw new InvalidOperationException("No se puede crear un producto asociado a una categoría inactiva");
             }
+
             //convertir el DTO a entidad y guardarlo en la base de datos
             var producto = _mapper.Map<Producto>(entity);
 
@@ -200,9 +197,8 @@ namespace inaApp.Services
             };
 
         }
-        private static void ValidarDatosFiscales(string codigo, decimal impuesto, decimal descuento, inaApp.Common.Enums.Enums.TipoImpuesto tipo)
+        private static void ValidarDatosFiscales(decimal impuesto, decimal descuento, inaApp.Common.Enums.Enums.TipoImpuesto tipo)
         {
-            if (string.IsNullOrWhiteSpace(codigo)) throw new ArgumentException("El código del producto es obligatorio.");
             if (!Enum.IsDefined(tipo)) throw new ArgumentException("El impuesto aplicable no es válido.");
             if (impuesto < 0 || impuesto > 100) throw new ArgumentException("El porcentaje de impuesto debe estar entre 0 y 100.");
             if (descuento < 0 || descuento > 100) throw new ArgumentException("El descuento máximo debe estar entre 0 y 100.");

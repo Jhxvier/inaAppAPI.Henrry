@@ -1,52 +1,14 @@
-﻿@using InaApp.ProyectoINAApp.Models.Factura
-@using System.Text.Json
-@model FacturaCreateViewModel
+﻿@model InaApp.ProyectoINAApp.Models.Factura.FacturaCreateViewModel
 @{
-    ViewData["Title"] = "Emitir documento electrónico";
+    ViewData["Title"] = "Emitir Factura Electrónica";
 }
+
 <div class="container mt-4">
-    <h2>Emitir documento electrónico</h2>
-    <form asp-action="Create" method="post" id="facturaForm">
-        <input asp-for="FacturaOrigenId" type="hidden"><input asp-for="NumeroDocumentoOriginal" type="hidden">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="card mb-3">
-            <div class="card-body row">
-                <div class="col-md-4"><label asp-for="TipoDocumento">Tipo de documento</label><input class="form-control" value="@(Model.EsNotaCredito ? "Nota de Crédito Electrónica (2)" : "Factura Electrónica (1)")" readonly><input asp-for="TipoDocumento" type="hidden"></div>
-                <div class="col-md-4"><label asp-for="Fecha"></label><input asp-for="Fecha" class="form-control" /></div>
-                <div class="col-md-4"><label>Cliente</label><div class="input-group"><input id="clienteNombre" asp-for="ClienteSeleccionado" class="form-control" readonly placeholder="Ningún cliente seleccionado">@if (!Model.EsNotaCredito) {
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#clientesModal">Buscar</button>
-                                }
-</div><input asp-for="ClienteId" type="hidden"><span asp-validation-for="ClienteId" class="text-danger"></span></div>
-            </div>
-        </div>
-        @if (Model.FacturaOrigenId.HasValue)
-        {
-            <div class="alert alert-info">Nota de crédito asociada a <strong>@Model.NumeroDocumentoOriginal</strong>. Quite las líneas que no desea acreditar y ajuste las cantidades.</div>
-            <div class="mb-3"><label asp-for="Motivo" class="form-label">Motivo de la nota de crédito</label><textarea asp-for="Motivo" class="form-control" required></textarea></div>
- }
-        @if (!Model.EsNotaCredito)
-        {
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productosModal">Buscar y agregar producto</button>
-        }
-        <div class="table-responsive"><table class="table table-bordered"><thead class="table-dark"><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Impuesto %</th><th>Descuento %</th><th>Subtotal</th><th>Impuesto</th><th>Total</th><th></th></tr></thead><tbody id="detalleBody"></tbody></table></div>
-        <div class="card ms-auto mb-3" style="max-width:420px"><div class="card-body"><p>Subtotal: <strong id="subtotal">₡0.00</strong></p><p>Impuestos: <strong id="impuesto">₡0.00</strong></p><p>Descuento: <strong id="descuento">₡0.00</strong></p><h4>Total: <span id="total">₡0.00</span></h4></div></div>
-        <button class="btn btn-success">Emitir documento</button> <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-    </form>
+    <h2>Emitir Factura Electrónica</h2>
+    <partial name="_FormularioDocumento" model="Model" />
 </div>
-<partial name="_BuscarClientes" model="Model" />
-<partial name="_BuscarProductos" model="Model" />
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        const clientes=@Html.Raw(JsonSerializer.Serialize(Model.ClientesDisponibles));
-        const productos=@Html.Raw(JsonSerializer.Serialize(Model.ProductosDisponibles));
-        let detalles=@Html.Raw(JsonSerializer.Serialize(Model.Detalles));
-        const dinero=n=>'₡'+Number(n).toLocaleString('es-CR',{minimumFractionDigits:2,maximumFractionDigits:2});
-        function clientesRender(){let a=document.querySelector('#filtroIdentificacion').value.toLowerCase(),b=document.querySelector('#filtroCliente').value.toLowerCase();document.querySelector('#clientesBody').innerHTML=clientes.filter(x=>x.Identificacion.toLowerCase().includes(a)&&x.Nombre.toLowerCase().includes(b)).map(x=>`<tr><td>${x.Identificacion}</td><td>${x.Nombre}</td><td><button type="button" class="btn btn-sm btn-primary" onclick="cliente(${x.Id})">Seleccionar</button></td></tr>`).join('')}
-        function cliente(id){let x=clientes.find(c=>c.Id===id);document.querySelector('#ClienteId').value=id;document.querySelector('#clienteNombre').value=x.Nombre;bootstrap.Modal.getInstance(document.querySelector('#clientesModal')).hide()}
-        function productosRender(){let a=document.querySelector('#filtroCodigo').value.toLowerCase(),b=document.querySelector('#filtroProducto').value.toLowerCase();document.querySelector('#productosBody').innerHTML=productos.filter(x=>x.Codigo.toLowerCase().includes(a)&&x.Nombre.toLowerCase().includes(b)).map(x=>`<tr><td>${x.Codigo}</td><td>${x.Nombre}</td><td>${x.Categoria}</td><td>${dinero(x.Precio)}</td><td>${x.Impuesto} (${x.PorcentajeImpuesto}%)</td><td>${x.Stock}</td><td><button type="button" class="btn btn-sm btn-primary" onclick="agregar(${x.Id})">Agregar</button></td></tr>`).join('')}
-        function agregar(id){if(detalles.some(x=>x.ProductoId===id)){alert('El producto ya fue agregado.');return}let p=productos.find(x=>x.Id===id);detalles.push({ProductoId:p.Id,Producto:p.Nombre,Cantidad:1,CantidadMaxima:p.Stock,PrecioUnitario:p.Precio,PorcentajeImpuesto:p.PorcentajeImpuesto,PorcentajeDescuento:0,Descuento:0,Subtotal:0,Impuesto:0,TotalLinea:0,Stock:p.Stock,DescuentoMaximo:p.DescuentoMaximo});render();bootstrap.Modal.getInstance(document.querySelector('#productosModal')).hide()}
-        function render(){detalles.forEach(d=>{let p=productos.find(x=>x.Id===d.ProductoId);if(p){d.Stock=d.Stock||p.Stock;d.CantidadMaxima=d.CantidadMaxima||p.Stock;d.DescuentoMaximo=p.DescuentoMaximo}});let sb=document.querySelector('#detalleBody');sb.innerHTML='';let sub=0,imp=0,desc=0;detalles.forEach((d,i)=>{d.Subtotal=d.Cantidad*d.PrecioUnitario;d.Descuento=d.Subtotal*d.PorcentajeDescuento/100;d.Impuesto=(d.Subtotal-d.Descuento)*d.PorcentajeImpuesto/100;d.TotalLinea=d.Subtotal-d.Descuento+d.Impuesto;sub+=d.Subtotal;imp+=d.Impuesto;desc+=d.Descuento;sb.innerHTML+=`<tr><td>${d.Producto}<input type="hidden" name="Detalles[${i}].ProductoId" value="${d.ProductoId}"><input type="hidden" name="Detalles[${i}].Producto" value="${d.Producto}"><input type="hidden" name="Detalles[${i}].PrecioUnitario" value="${d.PrecioUnitario}"><input type="hidden" name="Detalles[${i}].PorcentajeImpuesto" value="${d.PorcentajeImpuesto}"></td><td><input class="form-control" type="number" min="1" max="${d.CantidadMaxima}" name="Detalles[${i}].Cantidad" value="${d.Cantidad}" onchange="cambiar(${i},'Cantidad',this.value)"></td><td>${dinero(d.PrecioUnitario)}</td><td>${d.PorcentajeImpuesto}%</td><td><input class="form-control" type="number" min="0" max="${d.DescuentoMaximo}" step=".01" name="Detalles[${i}].PorcentajeDescuento" value="${d.PorcentajeDescuento}" onchange="cambiar(${i},'PorcentajeDescuento',this.value)"><small>Máx. ${d.DescuentoMaximo}%</small></td><td>${dinero(d.Subtotal)}</td><td>${dinero(d.Impuesto)}</td><td>${dinero(d.TotalLinea)}</td><td><button type="button" class="btn btn-danger btn-sm" onclick="detalles.splice(${i},1);render()">Quitar</button></td></tr>`});document.querySelector('#subtotal').textContent=dinero(sub);document.querySelector('#impuesto').textContent=dinero(imp);document.querySelector('#descuento').textContent=dinero(desc);document.querySelector('#total').textContent=dinero(sub+imp-desc)}
-        function cambiar(i,k,v){detalles[i][k]=Number(v);render()}['filtroIdentificacion','filtroCliente'].forEach(x=>document.querySelector('#'+x).oninput=clientesRender);['filtroCodigo','filtroProducto'].forEach(x=>document.querySelector('#'+x).oninput=productosRender);clientesRender();productosRender();render();
-    </script>
+    <script src="~/js/factura-popups.js"></script>
 }

@@ -5,8 +5,19 @@
         <div class="modal-content">
             <div class="modal-header"><h5 id="clientesModalTitulo">Buscar cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
             <div class="modal-body">
-                <div class="row mb-2"><div class="col"><input id="filtroIdentificacion" class="form-control" placeholder="Filtrar por identificación"></div><div class="col"><input id="filtroCliente" class="form-control" placeholder="Filtrar por nombre"></div></div>
-                <table class="table"><thead><tr><th>Identificación</th><th>Nombre</th><th></th></tr></thead><tbody id="clientesBody"></tbody></table>
+                <div class="row mb-2">
+                    <div class="col"><input class="form-control filtro-popup" data-tabla="clientesBody" data-campo="identificacion" placeholder="Filtrar por identificación"></div>
+                    <div class="col"><input class="form-control filtro-popup" data-tabla="clientesBody" data-campo="nombre" placeholder="Filtrar por nombre"></div>
+                </div>
+                <table class="table">
+                    <thead><tr><th>Identificación</th><th>Nombre</th><th></th></tr></thead>
+                    <tbody id="clientesBody">
+                        @foreach (var cliente in Model.ClientesDisponibles)
+                        {
+                            <tr data-identificacion="@cliente.Identificacion.ToLowerInvariant()" data-nombre="@cliente.Nombre.ToLowerInvariant()"><td>@cliente.Identificacion</td><td>@cliente.Nombre</td><td><button type="submit" asp-action="SeleccionarCliente" name="clienteSeleccionadoId" value="@cliente.Id" formnovalidate class="btn btn-sm btn-primary">Seleccionar</button></td></tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

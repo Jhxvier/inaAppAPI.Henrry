@@ -72,7 +72,7 @@ namespace InaApp.ProyectoINAApp.Controllers
                 var factura = _mapper.Map<FacturaDetailsViewModel>(response.Data);
 
                 return View(factura.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.NotaCreditoElectronica
-                    ? "DetailsNotaCredito" : "Details", factura);
+                                    ? "DetailsNotaCredito" : "Details", factura);
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             {
                 CalcularTotales(facturaVM);
                 return View(facturaVM.EsNotaCredito ? "NotaCredito" : "Create",
-                    await CargarListasAsync(facturaVM));
+                                    await CargarListasAsync(facturaVM));
             }
 
             try
@@ -153,8 +153,7 @@ namespace InaApp.ProyectoINAApp.Controllers
                 {
                     ModelState.AddModelError(string.Empty, response.Message);
                     CalcularTotales(facturaVM);
-                    return View(facturaVM.EsNotaCredito ? "NotaCredito" : "Create",
-                         await CargarListasAsync(facturaVM));
+                    return View(facturaVM.EsNotaCredito ? "NotaCredito" : "Create", await CargarListasAsync(facturaVM));
                 }
 
                 TempData["Mensaje"] = response.Message;
@@ -164,13 +163,38 @@ namespace InaApp.ProyectoINAApp.Controllers
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
                 CalcularTotales(facturaVM);
-                return View(facturaVM.EsNotaCredito ? "NotaCredito" : "Create",
-                    await CargarListasAsync(facturaVM));
+                return View(facturaVM.EsNotaCredito ? "NotaCredito" : "Create", await CargarListasAsync(facturaVM));
             }
         }
+        // POST: FacturaController/SeleccionarCliente
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SeleccionarCliente(
+            FacturaCreateViewModel facturaVM,
+            int clienteSeleccionadoId)
+        {
+            ModelState.Clear();
+            facturaVM.ClienteId = clienteSeleccionadoId;
 
-        // Agrega un detalle mediante un envío normal del formulario. De esta forma,
-        // la construcción de la factura no depende de JavaScript en el navegador.
+            var facturaConListas = await CargarListasAsync(facturaVM);
+            var cliente = facturaConListas.ClientesDisponibles
+                .SingleOrDefault(c => c.Id == clienteSeleccionadoId);
+
+            if (cliente == null)
+            {
+                facturaVM.ClienteId = 0;
+                facturaVM.ClienteSeleccionado = string.Empty;
+                ModelState.AddModelError(string.Empty, "El cliente seleccionado no existe o está inactivo.");
+            }
+            else
+            {
+                facturaVM.ClienteSeleccionado = cliente.Nombre;
+            }
+
+            CalcularTotales(facturaVM);
+            return View(ObtenerVistaFormulario(facturaVM), facturaConListas);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AgregarProducto(FacturaCreateViewModel facturaVM)
@@ -178,7 +202,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             var facturaConListas = await CargarListasAsync(facturaVM);
             var producto = facturaConListas.ProductosDisponibles
                 .SingleOrDefault(p => p.Id == facturaVM.ProductoSeleccionadoId);
-            var cantidad = facturaVM.Cantidad.GetValueOrDefault();
+            var cantidad = facturaVM.Cantidad.GetValueOrDefault(1);
 
             ModelState.Clear();
 
@@ -204,8 +228,10 @@ namespace InaApp.ProyectoINAApp.Controllers
                     ProductoId = producto.Id,
                     Producto = producto.Nombre,
                     Cantidad = cantidad,
+                    CantidadMaxima = producto.Stock,
                     PrecioUnitario = producto.Precio,
-                    PorcentajeImpuesto = producto.PorcentajeImpuesto
+                    PorcentajeImpuesto = producto.PorcentajeImpuesto,
+                    PorcentajeDescuento = 0
                 });
 
                 facturaVM.ProductoSeleccionadoId = null;
@@ -213,7 +239,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             }
 
             CalcularTotales(facturaVM);
-            return View("Create", facturaConListas);
+            return View(ObtenerVistaFormulario(facturaVM), facturaConListas);
         }
 
         [HttpPost]
@@ -230,7 +256,7 @@ namespace InaApp.ProyectoINAApp.Controllers
             }
 
             CalcularTotales(facturaVM);
-            return View("Create", await CargarListasAsync(facturaVM));
+            return View(ObtenerVistaFormulario(facturaVM), await CargarListasAsync(facturaVM));
         }
 
         [HttpPost]
@@ -239,7 +265,7 @@ namespace InaApp.ProyectoINAApp.Controllers
         {
             ModelState.Clear();
             CalcularTotales(facturaVM);
-            return View("Create", await CargarListasAsync(facturaVM));
+            return View(ObtenerVistaFormulario(facturaVM), await CargarListasAsync(facturaVM));
         }
 
 
@@ -297,6 +323,7 @@ namespace InaApp.ProyectoINAApp.Controllers
 
             facturaVM.Subtotal = facturaCalculada.Subtotal;
             facturaVM.Impuesto = facturaCalculada.Impuesto;
+            facturaVM.Descuento = facturaCalculada.Descuento;
             facturaVM.Total = facturaCalculada.Total;
         }
 
@@ -346,6 +373,11 @@ namespace InaApp.ProyectoINAApp.Controllers
             return RedirectToAction(nameof(Index));
         }*/
 
+        //funcion para determinar la vista a mostrar segun el tipo de documento
+        private static string ObtenerVistaFormulario(FacturaCreateViewModel facturaVM) =>
+            facturaVM.EsNotaCredito ? "NotaCredito" : "Create";
+
+        // Cargar listas de clientes y productos para el formulario de creación de factura
         private async Task<FacturaCreateViewModel> CargarListasAsync(
             FacturaCreateViewModel facturaVM)
         {
@@ -369,14 +401,38 @@ namespace InaApp.ProyectoINAApp.Controllers
                 Text = producto.Nombre
             }).ToList();
 
-            facturaVM.ProductosDisponibles = productos.Select(producto =>
+            facturaVM.ProductosDisponibles = productos.Where(p => p.Estado).Select(producto =>
                 new ProductoDisponibleViewModel
                 {
                     Id = producto.Id,
+                    Codigo = producto.Codigo,
                     Nombre = producto.Nombre,
+                    Categoria = producto.CategoriaProductoNombre,
+                    Impuesto = producto.ImpuestoAplicable.ToString(),
+                    PorcentajeImpuesto = producto.PorcentajeImpuesto,
+                    DescuentoMaximo = producto.DescuentoMaximo,
                     Precio = producto.Precio,
                     Stock = producto.Stock
                 }).ToList();
+
+            foreach (var detalle in facturaVM.Detalles)
+            {
+                var producto = facturaVM.ProductosDisponibles
+                    .FirstOrDefault(p => p.Id == detalle.ProductoId);
+
+                if (producto == null)
+                {
+                    continue;
+                }
+
+                detalle.Producto = producto.Nombre;
+                detalle.CantidadMaxima = detalle.CantidadMaxima > 0
+                    ? detalle.CantidadMaxima
+                    : producto.Stock;
+            }
+
+            if (facturaVM.ClienteId > 0 && string.IsNullOrWhiteSpace(facturaVM.ClienteSeleccionado))
+                facturaVM.ClienteSeleccionado = facturaVM.ClientesDisponibles.FirstOrDefault(c => c.Id == facturaVM.ClienteId)?.Nombre ?? string.Empty;
 
             return facturaVM;
         }

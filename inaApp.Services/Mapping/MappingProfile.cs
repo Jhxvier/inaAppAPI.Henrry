@@ -19,6 +19,7 @@ namespace inaApp.Services.Mapping
 
             //DE DTOCREATE A ENTITY
             CreateMap<ProductoCreateDTO, Producto>()
+                .ForMember(destino => destino.Codigo, opcion => opcion.Ignore())
                 .ForMember(destino => destino.CategoriaId, opcion => opcion.MapFrom(origen => origen.CategoriaProductoId));
             CreateMap<ClienteCreateDTO, Cliente>();
             CreateMap<CategoriaProductoCreateDTO, Categoria>();
@@ -28,6 +29,7 @@ namespace inaApp.Services.Mapping
             //DE DTOUPDATE A ENTITY
 
             CreateMap<ProductoUpdateDTO, Producto>()
+                .ForMember(destino => destino.Codigo, opcion => opcion.Ignore())
                 .ForMember(destino => destino.CategoriaId, opcion => opcion.MapFrom(origen => origen.CategoriaProductoId));
             CreateMap<ClienteUpdateDTO, Cliente>();
             CreateMap<CategoriaProductoUpdateDTO, Categoria>();

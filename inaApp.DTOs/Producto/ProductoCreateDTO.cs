@@ -11,8 +11,6 @@ namespace inaApp.DTOs.Producto
 {
     public class ProductoCreateDTO
     {
-        [Required, StringLength(30)]
-        public string Codigo { get; set; } = string.Empty;
         [Required(ErrorMessage = "El nombre del producto es obligatorio")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "El nombre del producto debe tener entre 3 y 100 caracteres")]
         public string Nombre { get; set; }
@@ -27,12 +25,16 @@ namespace inaApp.DTOs.Producto
         [Required(ErrorMessage = "El stock del producto es obligatorio")]
         [Range(1, int.MaxValue, ErrorMessage = "El stock debe ser mayor a 0")]
         public int Stock { get; set; }
+
         [Required(ErrorMessage = "La categoría del producto es obligatoria")]
         public int CategoriaProductoId { get; set; }
+
         [Required]
         public TipoImpuesto ImpuestoAplicable { get; set; } = TipoImpuesto.IVA;
+
         [Range(0, 100, ErrorMessage = "El porcentaje de impuesto debe estar entre 0 y 100.")]
         public decimal PorcentajeImpuesto { get; set; } = 13;
+
         [Range(0, 100, ErrorMessage = "El descuento máximo debe estar entre 0 y 100.")]
         public decimal DescuentoMaximo { get; set; }
     }

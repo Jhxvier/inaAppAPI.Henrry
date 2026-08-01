@@ -1,0 +1,110 @@
+﻿@model InaApp.ProyectoINAApp.Models.Factura.FacturaCreateViewModel
+
+<form asp-action="Create" method="post">
+    <input asp-for="FacturaOrigenId" type="hidden" />
+    <input asp-for="NumeroDocumentoOriginal" type="hidden" />
+    <input asp-for="TipoDocumento" type="hidden" />
+    <input asp-for="ClienteId" type="hidden" />
+    <input asp-for="ClienteSeleccionado" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="card mb-3">
+        <div class="card-body row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Tipo de documento</label>
+                <input class="form-control" value="@(Model.EsNotaCredito ? "Nota de Crédito Electrónica (2)" : "Factura Electrónica (1)")" readonly />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="Fecha" class="form-label"></label>
+                <input asp-for="Fecha" class="form-control" />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Cliente</label>
+                <div class="input-group">
+                    <input class="form-control" value="@Model.ClienteSeleccionado" readonly placeholder="Ningún cliente seleccionado" />
+                    @if (!Model.EsNotaCredito)
+                    {
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#clientesModal">Buscar</button>
+                    }
+                </div>
+                <span asp-validation-for="ClienteId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.EsNotaCredito)
+    {
+        <div class="alert alert-info">Nota de crédito asociada a <strong>@Model.NumeroDocumentoOriginal</strong>. Quite las líneas que no desea acreditar y ajuste las cantidades.</div>
+        <div class="mb-3">
+            <label asp-for="Motivo" class="form-label">Motivo de la nota de crédito</label>
+            <textarea asp-for="Motivo" class="form-control" required></textarea>
+        </div>
+    }
+    else
+    {
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productosModal">Buscar y agregar producto</button>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-dark"><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Impuesto %</th><th>Descuento %</th><th>Subtotal</th><th>Impuesto</th><th>Total</th><th></th></tr></thead>
+            <tbody>
+                @for (var indice = 0; indice < Model.Detalles.Count; indice++)
+                {
+                    <tr>
+                        <td>
+                            @Model.Detalles[indice].Producto
+                            <input asp-for="Detalles[indice].ProductoId" type="hidden" />
+                            <input asp-for="Detalles[indice].Producto" type="hidden" />
+                            <input asp-for="Detalles[indice].PrecioUnitario" type="hidden" />
+                            <input asp-for="Detalles[indice].PorcentajeImpuesto" type="hidden" />
+                            <input asp-for="Detalles[indice].CantidadMaxima" type="hidden" />
+                        </td>
+                        <td><input asp-for="Detalles[indice].Cantidad" type="number" min="1" max="@Model.Detalles[indice].CantidadMaxima" class="form-control" /></td>
+                        <td>₡@Model.Detalles[indice].PrecioUnitario.ToString("N2")</td>
+                        <td>@Model.Detalles[indice].PorcentajeImpuesto.ToString("N2") %</td>
+                        <td>
+                            @if (Model.EsNotaCredito)
+                            {
+                                <span>@Model.Detalles[indice].PorcentajeDescuento.ToString("N2") %</span>
+                                <input asp-for="Detalles[indice].PorcentajeDescuento" type="hidden" />
+                            }
+                            else
+                            {
+                                var producto = Model.ProductosDisponibles.FirstOrDefault(p => p.Id == Model.Detalles[indice].ProductoId);
+                                var descuentoMaximo = producto?.DescuentoMaximo ?? 0;
+                                <input asp-for="Detalles[indice].PorcentajeDescuento" type="number" min="0" max="@descuentoMaximo" step="0.01" class="form-control" />
+                                <small class="text-muted">Máx. @descuentoMaximo.ToString("N2") %</small>
+                            }
+                        </td>
+                        <td>₡@Model.Detalles[indice].Subtotal.ToString("N2")</td>
+                        <td>₡@Model.Detalles[indice].Impuesto.ToString("N2")</td>
+                        <td>₡@Model.Detalles[indice].TotalLinea.ToString("N2")</td>
+                        <td><button type="submit" asp-action="EliminarProducto" name="indice" value="@indice" formnovalidate class="btn btn-danger btn-sm">Quitar</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <button type="submit" asp-action="ActualizarTotales" formnovalidate class="btn btn-outline-primary">Actualizar cantidades y totales</button>
+        <div class="card" style="min-width: 360px">
+            <div class="card-body">
+                <p>Subtotal: <strong>₡@Model.Subtotal.ToString("N2")</strong></p>
+                <p>Impuestos: <strong>₡@Model.Impuesto.ToString("N2")</strong></p>
+                <p>Descuento: <strong>₡@Model.Descuento.ToString("N2")</strong></p>
+                <h4>Total: ₡@Model.Total.ToString("N2")</h4>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">@(Model.EsNotaCredito ? "Emitir nota de crédito" : "Emitir factura")</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+
+    @if (!Model.EsNotaCredito)
+    {
+        <partial name="_BuscarClientes" model="Model" />
+        <partial name="_BuscarProductos" model="Model" />
+    }
+</form>

@@ -117,6 +117,7 @@ namespace inaApp.Services
                     throw new InvalidOperationException("El cliente seleccionado no existe o está inactivo.");
                 }
 
+                // Validar que la lista de detalles no sea nula
                 dto.Detalles ??= new List<FacturaDetalleCreateDTO>();
 
                 if (dto.Detalles.Count == 0 &&
@@ -282,11 +283,14 @@ namespace inaApp.Services
                 factura.Descuento = descuento;
                 factura.Total = total;
                 factura.Estado = true;
+
+                // Asignar la factura original si existe
                 if (facturaOrigen != null)
                 {
                     factura.NumeroDocumentoOriginal = facturaOrigen.NumeroFactura;
                     factura.TipoDocumentoOriginal = facturaOrigen.TipoDocumento;
                 }
+                // Guardar la factura y los detalles en la base de datos
                 var facturaCreada = await _facturaRepository
                     .GuardarDocumentoAsync(factura, detallesFactura);
                 var facturaRespuesta = _mapper.Map<FacturaResponseDTO>(facturaCreada);

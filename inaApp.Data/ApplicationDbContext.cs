@@ -32,6 +32,7 @@ namespace inaApp.Data
                 entity.HasOne(f => f.Cliente).WithMany(c => c.Facturas).HasForeignKey(f => f.ClienteId).OnDelete(DeleteBehavior.Restrict);// Relación uno a muchos entre Factura y Cliente
                 entity.HasMany(f => f.Detalles).WithOne(d => d.Factura).HasForeignKey(d => d.FacturaId).OnDelete(DeleteBehavior.Cascade);// Relación uno a muchos entre Factura y FacturaDetalle
                 entity.HasOne(f => f.FacturaOrigen).WithMany(f => f.NotasCredito).HasForeignKey(f => f.FacturaOrigenId).OnDelete(DeleteBehavior.Restrict);
+                // Relación uno a muchos entre Factura y Factura (para notas de crédito)
             });
             modelBuilder.Entity<FacturaDetalle>()
                 .HasOne(d => d.Producto).WithMany(p => p.FacturaDetalles).HasForeignKey(d => d.ProductoId).OnDelete(DeleteBehavior.Restrict);// Relación uno a muchos entre FacturaDetalle y Producto

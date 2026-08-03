@@ -48,12 +48,9 @@
                         <td>@(factura.Estado ? "Activa" : "Inactiva")</td>
                         <td class="text-center">
                             <a asp-action="Details" asp-route-id="@factura.Id" class="btn btn-info btn-sm">Detalles</a>
-                            @if (factura.Estado)
+                            @if (factura.PuedeEmitirNotaCredito)
                             {
-                                @if (factura.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica)
-                                {
-                                    <a asp-action="NotaCredito" asp-route-id="@factura.Id" class="btn btn-warning btn-sm">Nota de crédito</a>
-                                }
+                                <a asp-action="NotaCredito" asp-route-id="@factura.Id" class="btn btn-warning btn-sm">Nota de crédito</a>
                             }
                         </td>
                     </tr>

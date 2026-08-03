@@ -64,7 +64,7 @@
 
     <div class="mt-3">
         <a asp-action="Index" class="btn btn-secondary">Volver</a>
-        @if (Model.Estado && Model.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica)
+        @if (Model.PuedeEmitirNotaCredito)
         {
             <a asp-action="NotaCredito" asp-route-id="@Model.Id" class="btn btn-warning">Generar nota de crédito</a>
         }

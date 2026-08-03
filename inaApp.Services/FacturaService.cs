@@ -35,11 +35,21 @@ namespace inaApp.Services
         {
             var facturas = await _facturaRepository.ObtenerTodosAsync();
 
+            
+            var facturasDto = _mapper.Map<List<FacturaListDTO>>(facturas);
+            for (var indice = 0; indice < facturas.Count; indice++)
+            {
+                var factura = facturas[indice];
+                facturasDto[indice].PuedeEmitirNotaCredito = factura.Estado &&
+                    factura.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica &&
+                    await TieneSaldoAcreditableAsync(factura);
+            }
+
             return new Response<List<FacturaListDTO>>
             {
                 Success = true,
                 Message = "Facturas obtenidas correctamente",
-                Data = _mapper.Map<List<FacturaListDTO>>(facturas)
+                Data = facturasDto
             };
         }
 
@@ -56,6 +66,8 @@ namespace inaApp.Services
                     var acreditada = await _facturaRepository
                         .ObtenerCantidadAcreditadaAsync(factura.Id, detalle.ProductoId);
                     detalle.CantidadDisponibleAcreditar = Math.Max(0, detalle.Cantidad - acreditada);
+                    dto.PuedeEmitirNotaCredito = factura.Estado &&
+                    dto.Detalles.Any(d => d.CantidadDisponibleAcreditar > 0);
                 }
             }
 
@@ -87,13 +99,17 @@ namespace inaApp.Services
         {
             try
             {
+                // sirve para validar que el tipo de documento sea FacturaElectronica o NotaCreditoElectronica
                 if (dto.TipoDocumento is not (inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica
                     or inaApp.Common.Enums.Enums.TipoDocumento.NotaCreditoElectronica))
                     throw new InvalidOperationException("El tipo de documento no es válido.");
+
+                // Validar que una Factura Electrónica no tenga factura de origen
                 if (dto.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica &&
                     dto.FacturaOrigenId.HasValue)
                     throw new InvalidOperationException("Una Factura Electrónica no puede indicar una factura de origen.");
-
+                
+                // Validar que el cliente exista y esté activo
                 var clienteExiste = await _facturaRepository.ExisteClienteActivoAsync(dto.ClienteId);
 
                 if (!clienteExiste)
@@ -101,7 +117,10 @@ namespace inaApp.Services
                     throw new InvalidOperationException("El cliente seleccionado no existe o está inactivo.");
                 }
 
-                if (dto.Detalles == null || dto.Detalles.Count == 0)
+                dto.Detalles ??= new List<FacturaDetalleCreateDTO>();
+
+                if (dto.Detalles.Count == 0 &&
+                    dto.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica)
                 {
                     throw new InvalidOperationException("Debe agregar al menos un producto.");
                 }
@@ -116,21 +135,58 @@ namespace inaApp.Services
                     throw new InvalidOperationException("No se debe agregar dos veces el mismo producto.");
                 }
 
+                // CASO DE LA NOTA DE CREDITO
+                //REGLAS DE NEGOCIO PARA NOTA DE CREDITO
+                // Validar que la nota de crédito tenga una factura de origen y que el cliente coincida
                 Factura? facturaOrigen = null;
+
                 if (dto.TipoDocumento == inaApp.Common.Enums.Enums.TipoDocumento.NotaCreditoElectronica)
                 {
+                    // Validar que la nota de crédito tenga una factura de origen
                     if (!dto.FacturaOrigenId.HasValue)
                         throw new InvalidOperationException("Debe seleccionar la factura de origen.");
+
+                    // Validar que la factura de origen exista y esté activa
                     facturaOrigen = await _facturaRepository
                         .ObtenerFacturaElectronicaConDetallesAsync(dto.FacturaOrigenId.Value)
                         ?? throw new InvalidOperationException("La nota de crédito debe asociarse a una Factura Electrónica existente y activa.");
+
+                    // Validar que la nota de crédito tenga un motivo
                     if (string.IsNullOrWhiteSpace(dto.Motivo))
+
                         throw new InvalidOperationException("Debe indicar el motivo de la nota de crédito.");
+                    // Validar que el cliente de la nota de crédito coincida con el cliente de la factura de origen
                     if (facturaOrigen.ClienteId != dto.ClienteId)
                         throw new InvalidOperationException("El cliente debe coincidir con el documento original.");
-                }
 
+                    // Un formulario de nota sin líneas representa la anulación completa:
+                    // acredita automáticamente todo el saldo que aún queda disponible.
+                    if (dto.Detalles.Count == 0)
+                    {
+                        foreach (var original in facturaOrigen.Detalles)
+                        {
+                            var yaAcreditada = await _facturaRepository
+                                .ObtenerCantidadAcreditadaAsync(facturaOrigen.Id, original.ProductoId);
+                            var pendiente = original.Cantidad - yaAcreditada;
+                            if (pendiente > 0)
+                            {
+                                dto.Detalles.Add(new FacturaDetalleCreateDTO
+                                {
+                                    ProductoId = original.ProductoId,
+                                    Cantidad = pendiente,
+                                    PorcentajeDescuento = original.PorcentajeDescuento
+                                });
+                            }
+                        }
+
+                        if (dto.Detalles.Count == 0)
+                            throw new InvalidOperationException("La factura ya fue acreditada por completo.");
+                    }
+                }
+                // Validar que la factura de origen no tenga notas de crédito asociadasss
                 var detallesFactura = new List<FacturaDetalle>();
+
+                // Validar cada detalle de la factura
                 foreach (var detalle in dto.Detalles)
                 {
                     var producto = await _facturaRepository.ObtenerProductoActivoAsync(detalle.ProductoId)
@@ -154,22 +210,32 @@ namespace inaApp.Services
                             throw new InvalidOperationException($"El producto {producto.Nombre} no tiene suficiente stock.");
                     }
 
+                    // Validar que la cantidad a acreditar no supere la cantidad facturada menos la cantidad ya acreditada
                     FacturaDetalle? detalleOriginal = null;
+
                     if (facturaOrigen != null)
                     {
                         detalleOriginal = facturaOrigen.Detalles.SingleOrDefault(d => d.ProductoId == producto.Id);
-                        var cantidadOriginal = detalleOriginal?.Cantidad ?? 0;
+
+                        var cantidadOriginal = detalleOriginal?.Cantidad ?? 0; // Si no se encuentra el detalle original, se asume que la cantidad original es 0
+
                         var yaAcreditada = await _facturaRepository
                             .ObtenerCantidadAcreditadaAsync(facturaOrigen.Id, producto.Id);
+
+                        // Validar que la cantidad a acreditar no supere la cantidad facturada menos la cantidad ya acreditada
                         if (detalle.Cantidad > cantidadOriginal - yaAcreditada)
                             throw new InvalidOperationException($"La cantidad a acreditar de {producto.Nombre} supera el saldo facturado ({cantidadOriginal - yaAcreditada}).");
                     }
-
+                    // Validar que el impuesto y el descuento sean válidos
                     if (!Enum.IsDefined(producto.ImpuestoAplicable) || producto.PorcentajeImpuesto < 0 || producto.PorcentajeImpuesto > 100)
                         throw new InvalidOperationException($"El producto {producto.Nombre} no tiene un impuesto válido.");
+
+                    // Validar que el porcentaje de descuento no supere el máximo permitido
                     if (detalle.PorcentajeDescuento < 0 || detalle.PorcentajeDescuento > producto.DescuentoMaximo)
                         throw new InvalidOperationException($"El descuento de {producto.Nombre} supera el máximo permitido de {producto.DescuentoMaximo:N2}%.");
 
+                    // Calcular los totales de la línea de detalle
+                    //se usa asi para que si es una nota de credito se tome el precio, impuesto y descuento de la factura original
                     var precioAplicable = detalleOriginal?.PrecioUnitario ?? producto.Precio;
                     var porcentajeImpuesto = detalleOriginal?.PorcentajeImpuesto ?? producto.PorcentajeImpuesto;
                     var porcentajeDescuento = detalleOriginal?.PorcentajeDescuento ?? detalle.PorcentajeDescuento;
@@ -177,6 +243,7 @@ namespace inaApp.Services
                     var descuentoLinea = subtotalLinea * porcentajeDescuento / 100m;
                     var impuestoLinea = (subtotalLinea - descuentoLinea) * porcentajeImpuesto / 100m;
 
+                    // Agregar el detalle de la factura a la lista de detalles
                     detallesFactura.Add(new FacturaDetalle
                     {
                         ProductoId = producto.Id,
@@ -200,12 +267,14 @@ namespace inaApp.Services
                     throw new InvalidOperationException("El descuento no puede superar el subtotal.");
                 }
 
-                var total = subtotal + impuesto - descuento;
+                var total = subtotal + impuesto - descuento; // Calcular el total de la factura
+
                 if (total <= 0)
                 {
                     throw new InvalidOperationException("El total de la factura debe ser mayor que cero.");
                 }
 
+                // Crear la factura y asignar los detalles
                 var factura = _mapper.Map<Factura>(dto);
                 factura.Detalles = new List<FacturaDetalle>();
                 factura.Subtotal = subtotal;
@@ -238,6 +307,19 @@ namespace inaApp.Services
                     Data = null!
                 };
             }
+        }
+        // sirve para saber si existe un saldo acreditable a usar para la factura
+        private async Task<bool> TieneSaldoAcreditableAsync(Factura factura)
+        {
+            foreach (var detalle in factura.Detalles)
+            {
+                var acreditada = await _facturaRepository
+                    .ObtenerCantidadAcreditadaAsync(factura.Id, detalle.ProductoId);
+                if (detalle.Cantidad > acreditada)
+                    return true;
+            }
+
+            return false;
         }
 
     }

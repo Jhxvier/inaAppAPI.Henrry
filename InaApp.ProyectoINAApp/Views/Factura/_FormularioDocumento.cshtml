@@ -34,7 +34,7 @@
 
     @if (Model.EsNotaCredito)
     {
-        <div class="alert alert-info">Nota de crédito de <strong>@Model.NumeroDocumentoOriginal</strong>: las líneas que deje se acreditan y vuelven al stock; las que quite permanecen en la factura. Ajuste la cantidad para una devolución parcial.</div>
+        <div class="alert alert-info">Nota de crédito de <strong>@Model.NumeroDocumentoOriginal</strong>: las líneas que deje se acreditan y vuelven al stock; las que quite permanecen en la factura. Si quita todas las líneas, se realizará la anulación total de la factura.</div>
         <div class="mb-3">
             <label asp-for="Motivo" class="form-label">Motivo de la nota de crédito</label>
             <textarea asp-for="Motivo" class="form-control" required></textarea>
@@ -59,6 +59,7 @@
                             <input asp-for="Detalles[indice].PrecioUnitario" type="hidden" />
                             <input asp-for="Detalles[indice].PorcentajeImpuesto" type="hidden" />
                             <input asp-for="Detalles[indice].CantidadMaxima" type="hidden" />
+                            <input asp-for="Detalles[indice].DescuentoMaximo" type="hidden" />
                         </td>
                         <td><input asp-for="Detalles[indice].Cantidad" type="number" min="1" max="@Model.Detalles[indice].CantidadMaxima" class="form-control" /></td>
                         <td>₡@Model.Detalles[indice].PrecioUnitario.ToString("N2")</td>
@@ -71,10 +72,14 @@
                             }
                             else
                             {
-                                var producto = Model.ProductosDisponibles.FirstOrDefault(p => p.Id == Model.Detalles[indice].ProductoId);
-                                var descuentoMaximo = producto?.DescuentoMaximo ?? 0;
-                                <input asp-for="Detalles[indice].PorcentajeDescuento" type="number" min="0" max="@descuentoMaximo" step="0.01" class="form-control" />
-                                <small class="text-muted">Máx. @descuentoMaximo.ToString("N2") %</small>
+                                var descuentoMaximo = Model.Detalles[indice].DescuentoMaximo;
+                                var descuentoMaximoTexto = descuentoMaximo.ToString("N2");
+                                <input asp-for="Detalles[indice].PorcentajeDescuento"
+                                       type="number" min="0" max="@descuentoMaximo" step="0.01"
+                                       class="form-control"
+                                       oninput="this.setCustomValidity(this.validity.rangeUnderflow || this.validity.rangeOverflow ? 'El descuento debe estar entre 0 y @descuentoMaximoTexto %.' : '')" />
+                                <span asp-validation-for="Detalles[indice].PorcentajeDescuento" class="text-danger"></span>
+                                <small class="text-muted">Máx. @descuentoMaximoTexto %</small>
                             }
                         </td>
                         <td>₡@Model.Detalles[indice].Subtotal.ToString("N2")</td>

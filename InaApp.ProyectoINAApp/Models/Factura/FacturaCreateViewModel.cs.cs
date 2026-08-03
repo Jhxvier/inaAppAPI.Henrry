@@ -67,6 +67,7 @@ namespace InaApp.ProyectoINAApp.Models.Factura
         public decimal PrecioUnitario { get; set; }
         public decimal PorcentajeImpuesto { get; set; }
         [Range(0, 100)] public decimal PorcentajeDescuento { get; set; }
+        public decimal DescuentoMaximo { get; set; }
         public decimal Descuento { get; set; }
         public decimal Subtotal { get; set; }
         public decimal Impuesto { get; set; }

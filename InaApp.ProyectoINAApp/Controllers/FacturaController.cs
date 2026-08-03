@@ -100,6 +100,12 @@ namespace InaApp.ProyectoINAApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (!response.Data.PuedeEmitirNotaCredito)
+            {
+                TempData["Mensaje"] = "La factura ya fue anulada o acreditada por completo.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
             var vm = new FacturaCreateViewModel
             {
                 TipoDocumento = inaApp.Common.Enums.Enums.TipoDocumento.NotaCreditoElectronica,
@@ -117,7 +123,8 @@ namespace InaApp.ProyectoINAApp.Controllers
                         CantidadMaxima = d.CantidadDisponibleAcreditar,
                         PrecioUnitario = d.PrecioUnitario,
                         PorcentajeImpuesto = d.PorcentajeImpuesto,
-                        PorcentajeDescuento = d.PorcentajeDescuento
+                        PorcentajeDescuento = d.PorcentajeDescuento,
+                        DescuentoMaximo = d.PorcentajeDescuento
                     }).ToList()
             };
             return View("NotaCredito", await CargarListasAsync(vm));
@@ -132,10 +139,14 @@ namespace InaApp.ProyectoINAApp.Controllers
                 ? inaApp.Common.Enums.Enums.TipoDocumento.NotaCreditoElectronica
                 : inaApp.Common.Enums.Enums.TipoDocumento.FacturaElectronica;
 
-            if (facturaVM.Detalles.Count == 0)
+
+
+            if (facturaVM.Detalles.Count == 0 && !facturaVM.EsNotaCredito)
             {
                 ModelState.AddModelError(string.Empty, "Debe agregar al menos un producto.");
             }
+
+            await ValidarDescuentosAsync(facturaVM);
 
             if (!ModelState.IsValid)
             {
@@ -231,7 +242,8 @@ namespace InaApp.ProyectoINAApp.Controllers
                     CantidadMaxima = producto.Stock,
                     PrecioUnitario = producto.Precio,
                     PorcentajeImpuesto = producto.PorcentajeImpuesto,
-                    PorcentajeDescuento = 0
+                    PorcentajeDescuento = 0,
+                    DescuentoMaximo = producto.DescuentoMaximo
                 });
 
                 facturaVM.ProductoSeleccionadoId = null;
@@ -264,6 +276,7 @@ namespace InaApp.ProyectoINAApp.Controllers
         public async Task<ActionResult> ActualizarTotales(FacturaCreateViewModel facturaVM)
         {
             ModelState.Clear();
+            await ValidarDescuentosAsync(facturaVM);
             CalcularTotales(facturaVM);
             return View(ObtenerVistaFormulario(facturaVM), await CargarListasAsync(facturaVM));
         }
@@ -311,6 +324,18 @@ namespace InaApp.ProyectoINAApp.Controllers
         private void CalcularTotales(FacturaCreateViewModel facturaVM)
         {
             var facturaDTO = _mapper.Map<FacturaCreateDTO>(facturaVM);
+
+            // Nunca se deben calcular importes usando un porcentaje inválido.
+            // Se conserva el valor ingresado en el ViewModel para mostrar el error, pero el cálculo usa 0 hasta que el usuario lo corrija.
+            for (var indice = 0; indice < facturaVM.Detalles.Count; indice++)
+            {
+                var detalle = facturaVM.Detalles[indice];
+                if (detalle.PorcentajeDescuento < 0 ||
+                    detalle.PorcentajeDescuento > detalle.DescuentoMaximo)
+                {
+                    facturaDTO.Detalles[indice].PorcentajeDescuento = 0;
+                }
+            }
             var facturaCalculada = _facturaService.CalcularTotales(facturaDTO);
 
             for (var indice = 0; indice < facturaVM.Detalles.Count; indice++)
@@ -429,12 +454,47 @@ namespace InaApp.ProyectoINAApp.Controllers
                 detalle.CantidadMaxima = detalle.CantidadMaxima > 0
                     ? detalle.CantidadMaxima
                     : producto.Stock;
+                detalle.DescuentoMaximo = facturaVM.EsNotaCredito
+                    ? detalle.PorcentajeDescuento
+                    : producto.DescuentoMaximo;
             }
 
             if (facturaVM.ClienteId > 0 && string.IsNullOrWhiteSpace(facturaVM.ClienteSeleccionado))
                 facturaVM.ClienteSeleccionado = facturaVM.ClientesDisponibles.FirstOrDefault(c => c.Id == facturaVM.ClienteId)?.Nombre ?? string.Empty;
 
             return facturaVM;
+        }
+
+        // Validar que los descuentos aplicados en los detalles de la factura no superen el máximo permitido por cada producto.
+        private async Task ValidarDescuentosAsync(FacturaCreateViewModel facturaVM)
+        {
+            var productosResponse = await _productoService.ObtenerTodosAsync();
+            var productos = productosResponse.Data ?? new List<ProductoResponseDTO>();
+
+            for (var indice = 0; indice < facturaVM.Detalles.Count; indice++)
+            {
+                var detalle = facturaVM.Detalles[indice];
+                var producto = productos.SingleOrDefault(p => p.Id == detalle.ProductoId && p.Estado);
+                if (producto == null)
+                {
+                    ModelState.AddModelError(
+                        $"Detalles[{indice}].ProductoId",
+                        "El producto seleccionado no existe o está inactivo.");
+                    continue;
+                }
+
+                // El máximo se obtiene nuevamente del servidor; no se confía
+                // en el campo oculto enviado por el navegador.
+                detalle.DescuentoMaximo = producto.DescuentoMaximo;
+
+                if (detalle.PorcentajeDescuento < 0 ||
+                    detalle.PorcentajeDescuento > producto.DescuentoMaximo)
+                {
+                    ModelState.AddModelError(
+                        $"Detalles[{indice}].PorcentajeDescuento",
+                        $"El descuento de {producto.Nombre} no puede superar el máximo permitido de {producto.DescuentoMaximo:N2}%.");
+                }
+            }
         }
     }
 }

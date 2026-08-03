@@ -23,6 +23,7 @@ namespace inaApp.DTOs.Factura
         public decimal Descuento { get; set; }
         public decimal Total { get; set; }
         public bool Estado { get; set; }
+        public bool PuedeEmitirNotaCredito { get; set; }
 
     }
 }
